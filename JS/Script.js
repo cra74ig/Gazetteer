@@ -55,7 +55,7 @@ function GetCountryCode(position) {
       }).addTo(mymap);
       
     //   marker.bindPopup("<table><thead><tr><th>Currency</th><th>GBP</th><th>USD</th><th>EUR</th></tr></thead><tbody><tr><td id='CurrentLocationCurrency'></td><td id='CurrentLocationexchangeGBP'></td><td id='CurrentLocationexchangeUSD'></td><td id='CurrentLocationexchangeEUR'></td></tr></tbody></table>").openPopup();
-    marker.bindPopup("<div id=CurrentLocationWeather></div><div id=CurrentLocationTable></div><div id=CurrentLocationPopulation></div><div id=CurrentLocationCapital></div>",{minWidth: 200}).openPopup();
+    marker.bindPopup("<div id=CurrentLocationCapital></div><div id=CurrentLocationWeather></div><div id=CurrentLocationTable></div><div id=CurrentLocationPopulation></div>",{minWidth: 200, maxWidth:600}).openPopup();
     $.ajax({
         url: "PHP/GetCountry.PHP",
         type: 'POST',
@@ -152,8 +152,8 @@ function GetDetails(CountryCode, IsCurrentLocation){
                     // console.log(ExchangeRate);
                     // contents = contents + ExchangeRate;
                     // contents = contents + GetWeather(result["data"][0]["capital"],"CurrentLocation");
-                    $("#CurrentLocationPopulation").html("<p>Population: " + (result["data"][0]["population"]));
-                    $("#CurrentLocationCapital").html("<p>Capital City: " + (result["data"][0]["capital"]));
+                    $("#CurrentLocationPopulation").html("<h3>Population: " + (result["data"][0]["population"])+ "</h3>");
+                    $("#CurrentLocationCapital").html("<h3>Capital City: " + (result["data"][0]["capital"])+"</h3>");
                     // $("#CurrentLocation").html(contents);
                     console.log(GetExchangeRate(result["data"][0]["currencyCode"],"CurrentLocation"));
                     // $("#CurrentLocationTable").html(GetExchangeRate(result["data"][0]["currencyCode"],"CurrentLocation"));
