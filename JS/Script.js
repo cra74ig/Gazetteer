@@ -1,12 +1,13 @@
     var mymap = L.map('mapid').setView([51.505, -0.09], 11);
     L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}', {
-    attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
+    attribution: "<div>Icons made by <a href='https://www.flaticon.com/authors/freepik' title='Freepik'>Freepik</a> from <a href='https://www.flaticon.com/' title='Flaticon'>www.flaticon.com</a><br/>Map data &copy <a href='https://www.openstreetmap.org/'>OpenStreetMap</a> contributors, <a href='https://creativecommons.org/licenses/by-sa/2.0/'>CC-BY-SA</a>, Imagery © <a href='https://www.mapbox.com/'>Mapbox</a></div>",
     maxZoom: 18,
     id: 'mapbox/streets-v11',
     tileSize: 512,
     zoomOffset: -1,
     accessToken: 'pk.eyJ1IjoiY3JhNzRpZyIsImEiOiJja2c5azJrZGEwMHFoMnNzdzVjZmd5eDJ6In0.bZuD8zD7pmYGbg9tibxE4w'
 }).addTo(mymap);
+
 L.Control.select = L.Control.extend({
     onAdd: function(map) {
         var form = L.DomUtil.create('div');
@@ -41,7 +42,7 @@ $("#CountryChoiceButton").click(function(){
     var Country = $("#CountryChoice").val();
     console.log(Country);
     MoveMapToOptions(Country);
-    GetDetails(Country);
+    GetDetails(Country,false);
 })
 //gets position of client
 function GetCountryCode(position) {
@@ -51,6 +52,11 @@ function GetCountryCode(position) {
     console.log(y);
     var Corods = new L.LatLng(y,x)
     mymap.setView(Corods, 13, {animation: true});
+    var marker = L.marker(Corods, {
+        title: "Current Location"
+      }).addTo(mymap);
+      
+      marker.bindPopup("<table><thead><tr><th>Currency</th><th>GBP</th><th>USD</th><th>EUR</th></tr></thead><tbody><tr><td id='CurrentLocationCurrency'></td><td id='CurrentLocationexchangeGBP'></td><td id='CurrentLocationexchangeUSD'></td><td id='CurrentLocationexchangeEUR'></td></tr></tbody></table>").openPopup();
     $.ajax({
         url: "PHP/GetCountry.PHP",
         type: 'POST',
@@ -63,7 +69,7 @@ function GetCountryCode(position) {
             console.log(result);
 
             if (result.status.name == "ok") {
-                GetDetails(result.data);
+                GetDetails(result.data,true);
 
             }
         
@@ -83,6 +89,12 @@ function MoveMapToOptions(CountryCode){
             var Corods = new L.LatLng(y,x);
             console.log(Corods);
             mymap.setView(Corods, 11, {animation: true});
+            var marker = L.marker(Corods, {
+                title: "London"
+              }).addTo(mymap);
+              
+              marker.bindPopup("<table><thead><tr><th>Currency</th><th>GBP</th><th>USD</th><th>EUR</th></tr></thead><tbody><tr><td id='" + CountryCode +"Currency'></td><td id='" + CountryCode +"exchangeGBP'></td><td id='" + CountryCode +"exchangeUSD'></td><td id='" + CountryCode +"exchangeEUR'></td></tr></tbody></table>").openPopup();
+            
             break;
         case CountryCode="USA":
             y=38.9072;
@@ -90,6 +102,11 @@ function MoveMapToOptions(CountryCode){
             console.log(x + " " + y);
             var Corods = new L.LatLng(y,x);
             mymap.setView(Corods, 11, {animation: true});
+            var marker = L.marker(Corods, {
+                title: "Washington DC"
+              }).addTo(mymap);
+              
+              marker.bindPopup("<table><thead><tr><th>Currency</th><th>GBP</th><th>USD</th><th>EUR</th></tr></thead><tbody><tr><td id='" + CountryCode +"Currency'></td><td id='" + CountryCode +"exchangeGBP'></td><td id='" + CountryCode +"exchangeUSD'></td><td id='" + CountryCode +"exchangeEUR'></td></tr></tbody></table>").openPopup();
             break;
         case CountryCode="FR":
             y=48.8566;
@@ -97,6 +114,11 @@ function MoveMapToOptions(CountryCode){
             console.log(x + " " + y);
             var Corods = new L.LatLng(y,x);
             mymap.setView(Corods, 11, {animation: true});
+            var marker = L.marker(Corods, {
+                title: "Paris"
+              }).addTo(mymap);
+              
+              marker.bindPopup("<table><thead><tr><th>Currency</th><th>GBP</th><th>USD</th><th>EUR</th></tr></thead><tbody><tr><td id='" + CountryCode +"Currency'></td><td id='" + CountryCode +"exchangeGBP'></td><td id='" + CountryCode +"exchangeUSD'></td><td id='" + CountryCode +"exchangeEUR'></td></tr></tbody></table>").openPopup();
             break;
         case CountryCode="ES":
             y=40.4168;
@@ -104,12 +126,17 @@ function MoveMapToOptions(CountryCode){
             console.log(x + " " + y);
             var Corods = new L.LatLng(y,x);
             mymap.setView(Corods, 11, {animation: true});
+            var marker = L.marker(Corods, {
+                title: "Madrid"
+              }).addTo(mymap);
+              
+              marker.bindPopup("<table><thead><tr><th>Currency</th><th>GBP</th><th>USD</th><th>EUR</th></tr></thead><tbody><tr><td id='" + CountryCode +"Currency'></td><td id='" + CountryCode +"exchangeGBP'></td><td id='" + CountryCode +"exchangeUSD'></td><td id='" + CountryCode +"exchangeEUR'></td></tr></tbody></table>").openPopup();
             break;
         
     }
 }
 //Reaches to other API/PHP files and shows data on page.
-function GetDetails(CountryCode){
+function GetDetails(CountryCode, IsCurrentLocation){
     $.ajax({
         url: "PHP/GetCountryinfo.PHP",
         type: 'POST',
@@ -121,11 +148,20 @@ function GetDetails(CountryCode){
             console.log(result);
 
             if (result.status.name == "ok") {
-                GetExchangeRate(result["data"][0]["currencyCode"]);
-                GetWeather(result["data"][0]["capital"]);
-                $("#population").html((result["data"][0]["population"]));
-                $("#capital").html((result["data"][0]["capital"]));
-                $("#Currency").html((result["data"][0]["currencyCode"]));
+                if(IsCurrentLocation){
+                    GetExchangeRate(result["data"][0]["currencyCode"],"CurrentLocation");
+                    GetWeather(result["data"][0]["capital"],"CurrentLocation");
+                    $("#CurrentLocationpopulation").html((result["data"][0]["population"]));
+                    $("#CurrentLocationcapital").html((result["data"][0]["capital"]));
+                    $("#CurrentLocationCurrency").html((result["data"][0]["currencyCode"]));
+                }else{
+                    console.log("notCurrent");
+                    GetExchangeRate(result["data"][0]["currencyCode"],CountryCode);
+                    GetWeather(result["data"][0]["capital"],CountryCode);
+                    $("#"+CountryCode+"population").html((result["data"][0]["population"]));
+                    $("#"+CountryCode+"capital").html((result["data"][0]["capital"]));
+                    $("#"+CountryCode+"Currency").html((result["data"][0]["currencyCode"]));
+                }
             }
         
         },
@@ -135,7 +171,7 @@ function GetDetails(CountryCode){
     });
     console.log(CountryCode);
 }
-function GetExchangeRate(Currency){
+function GetExchangeRate(Currency,Location){
     console.log("test");
     $.ajax({
         url: "PHP/GetExchangeRate.PHP",
@@ -148,9 +184,9 @@ function GetExchangeRate(Currency){
             console.log(result);
 
             if (result.status.name == "ok") {
-                $("#exchangeUSD").html((result["data"]["USD"]));
-                $("#exchangeGBP").html((result["data"]["GBP"]));
-                $("#exchangeEUR").html((result["data"]["EUR"]));
+                $("#"+Location+"exchangeUSD").html((result["data"]["USD"]).toFixed(2));
+                $("#"+Location+"exchangeGBP").html((result["data"]["GBP"]).toFixed(2));
+                $("#"+Location+"exchangeEUR").html((result["data"]["EUR"]).toFixed(2));
                 }
         
         },
@@ -159,7 +195,7 @@ function GetExchangeRate(Currency){
         }
     });
 }
-function GetWeather(Capital){
+function GetWeather(Capital,Location){
     console.log(Capital)
     $.ajax({
         url: "PHP/GetWeather.PHP",
@@ -173,7 +209,7 @@ function GetWeather(Capital){
 
             if (result.status.name == "ok") {
                 var Wimage = result["data"];
-                $("#weather").attr("src", Wimage);
+                $("#"+Location+"weather").attr("src", Wimage);
                 console.log(result["data"]);
                 }
         

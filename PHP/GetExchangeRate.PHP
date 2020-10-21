@@ -21,10 +21,16 @@
 	$output['status']['name'] = "ok";
 	$output['status']['description'] = "Country returned";
 	$output['status']['returnedIn'] = (microtime(true) - $executionStartTime) / 1000 . " ms";
-	$output['data']["currentCurrency"] = $decode["rates"][$_REQUEST["currency"]];
+	
+	$output['data']["currentCurrency"] = 1.0;
 	$output['data']["USD"] = $decode["rates"]["USD"];
 	$output['data']["GBP"] = $decode["rates"]["GBP"];
-	$output['data']["EUR"] = $decode["rates"]["EUR"];
+	if(isset($decode["rates"]["EUR"])){
+		$output['data']["EUR"] = $decode["rates"]["EUR"];
+	}else{
+		$output['data']["EUR"] = 1.0;
+	}
+	
 	
 	header('Content-Type: application/json; charset=UTF-8');
 

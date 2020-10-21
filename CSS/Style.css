@@ -1,0 +1,32 @@
+#CurrentLocation{
+    max-height: 20px;
+    max-width: 20px;
+    
+}
+#CurrentLocation:hover{
+    cursor: pointer;
+}
+input[Type="button"]{
+    cursor: pointer;
+}
+select{
+    width:70%;
+}
+select:hover{
+    cursor: pointer;
+}
+body {
+    padding: 0;
+    margin: 0;
+}
+html, body, #map {
+    height: 100%;
+    width: 100vw;
+}
+#mapid { 
+    height: 100%;
+    width: 100%;
+}
+#CountryFormDiv{
+    max-width: 100%;
+}
