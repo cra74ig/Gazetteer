@@ -47,16 +47,15 @@ $("#CountryChoiceButton").click(function(){
 //gets position of client
 function GetCountryCode(position) {
     var x = position.coords.longitude;
-    console.log(x);
     var y = position.coords.latitude;
-    console.log(y);
     var Corods = new L.LatLng(y,x)
     mymap.setView(Corods, 13, {animation: true});
     var marker = L.marker(Corods, {
         title: "Current Location"
       }).addTo(mymap);
       
-      marker.bindPopup("<table><thead><tr><th>Currency</th><th>GBP</th><th>USD</th><th>EUR</th></tr></thead><tbody><tr><td id='CurrentLocationCurrency'></td><td id='CurrentLocationexchangeGBP'></td><td id='CurrentLocationexchangeUSD'></td><td id='CurrentLocationexchangeEUR'></td></tr></tbody></table>").openPopup();
+    //   marker.bindPopup("<table><thead><tr><th>Currency</th><th>GBP</th><th>USD</th><th>EUR</th></tr></thead><tbody><tr><td id='CurrentLocationCurrency'></td><td id='CurrentLocationexchangeGBP'></td><td id='CurrentLocationexchangeUSD'></td><td id='CurrentLocationexchangeEUR'></td></tr></tbody></table>").openPopup();
+    marker.bindPopup("<div id=CurrentLocationWeather></div><div id=CurrentLocationTable></div><div id=CurrentLocationPopulation></div><div id=CurrentLocationCapital></div>",{minWidth: 200}).openPopup();
     $.ajax({
         url: "PHP/GetCountry.PHP",
         type: 'POST',
@@ -85,7 +84,6 @@ function MoveMapToOptions(CountryCode){
         case CountryCode="GB":
             y=51.5074;
             x= parseFloat("-0.1278");
-            console.log(x + " " + y)
             var Corods = new L.LatLng(y,x);
             console.log(Corods);
             mymap.setView(Corods, 11, {animation: true});
@@ -93,7 +91,7 @@ function MoveMapToOptions(CountryCode){
                 title: "London"
               }).addTo(mymap);
               
-              marker.bindPopup("<table><thead><tr><th>Currency</th><th>GBP</th><th>USD</th><th>EUR</th></tr></thead><tbody><tr><td id='" + CountryCode +"Currency'></td><td id='" + CountryCode +"exchangeGBP'></td><td id='" + CountryCode +"exchangeUSD'></td><td id='" + CountryCode +"exchangeEUR'></td></tr></tbody></table>").openPopup();
+              marker.bindPopup("<div id=GBWeather></div><br/><div id=GBTable></div><br/><div id=GBPopulation></div><br/><div id=GBCapital></div><br/>",{maxWidth: 400,minWidth: 200}).openPopup();
             
             break;
         case CountryCode="USA":
@@ -106,7 +104,7 @@ function MoveMapToOptions(CountryCode){
                 title: "Washington DC"
               }).addTo(mymap);
               
-              marker.bindPopup("<table><thead><tr><th>Currency</th><th>GBP</th><th>USD</th><th>EUR</th></tr></thead><tbody><tr><td id='" + CountryCode +"Currency'></td><td id='" + CountryCode +"exchangeGBP'></td><td id='" + CountryCode +"exchangeUSD'></td><td id='" + CountryCode +"exchangeEUR'></td></tr></tbody></table>").openPopup();
+              marker.bindPopup("<div id=USAWeather></div><br/><div id=USATable></div><br/><div id=USAPopulation></div><br/><div id=USACapital></div><br/>",{maxWidth: 400,minWidth: 200}).openPopup();
             break;
         case CountryCode="FR":
             y=48.8566;
@@ -118,7 +116,7 @@ function MoveMapToOptions(CountryCode){
                 title: "Paris"
               }).addTo(mymap);
               
-              marker.bindPopup("<table><thead><tr><th>Currency</th><th>GBP</th><th>USD</th><th>EUR</th></tr></thead><tbody><tr><td id='" + CountryCode +"Currency'></td><td id='" + CountryCode +"exchangeGBP'></td><td id='" + CountryCode +"exchangeUSD'></td><td id='" + CountryCode +"exchangeEUR'></td></tr></tbody></table>").openPopup();
+              marker.bindPopup("<div id=FRWeather></div><br/><div id=FRTable></div><br/><div id=FRPopulation></div><br/><div id=FRCapital></div><br/>",{maxWidth: 400,minWidth: 200}).openPopup();
             break;
         case CountryCode="ES":
             y=40.4168;
@@ -130,7 +128,7 @@ function MoveMapToOptions(CountryCode){
                 title: "Madrid"
               }).addTo(mymap);
               
-              marker.bindPopup("<table><thead><tr><th>Currency</th><th>GBP</th><th>USD</th><th>EUR</th></tr></thead><tbody><tr><td id='" + CountryCode +"Currency'></td><td id='" + CountryCode +"exchangeGBP'></td><td id='" + CountryCode +"exchangeUSD'></td><td id='" + CountryCode +"exchangeEUR'></td></tr></tbody></table>").openPopup();
+              marker.bindPopup("<div id=ESWeather></div><br/><div id=ESTable></div><br/><div id=ESPopulation></div><br/><div id=ESCapital></div><br/>",{maxWidth: 400,minWidth: 200}).openPopup();
             break;
         
     }
@@ -149,18 +147,23 @@ function GetDetails(CountryCode, IsCurrentLocation){
 
             if (result.status.name == "ok") {
                 if(IsCurrentLocation){
-                    GetExchangeRate(result["data"][0]["currencyCode"],"CurrentLocation");
-                    GetWeather(result["data"][0]["capital"],"CurrentLocation");
-                    $("#CurrentLocationpopulation").html((result["data"][0]["population"]));
-                    $("#CurrentLocationcapital").html((result["data"][0]["capital"]));
-                    $("#CurrentLocationCurrency").html((result["data"][0]["currencyCode"]));
+                    var contents = "<br/>";
+                    // var ExchangeRate = GetExchangeRate(result["data"][0]["currencyCode"],"CurrentLocation");
+                    // console.log(ExchangeRate);
+                    // contents = contents + ExchangeRate;
+                    // contents = contents + GetWeather(result["data"][0]["capital"],"CurrentLocation");
+                    $("#CurrentLocationPopulation").html("<p>Population: " + (result["data"][0]["population"]));
+                    $("#CurrentLocationCapital").html("<p>Capital City: " + (result["data"][0]["capital"]));
+                    // $("#CurrentLocation").html(contents);
+                    console.log(GetExchangeRate(result["data"][0]["currencyCode"],"CurrentLocation"));
+                    // $("#CurrentLocationTable").html(GetExchangeRate(result["data"][0]["currencyCode"],"CurrentLocation"));
+                    $("#CurrentLocationWeather").html(GetWeather(result["data"][0]["capital"],"CurrentLocation"));
                 }else{
-                    console.log("notCurrent");
                     GetExchangeRate(result["data"][0]["currencyCode"],CountryCode);
                     GetWeather(result["data"][0]["capital"],CountryCode);
-                    $("#"+CountryCode+"population").html((result["data"][0]["population"]));
-                    $("#"+CountryCode+"capital").html((result["data"][0]["capital"]));
-                    $("#"+CountryCode+"Currency").html((result["data"][0]["currencyCode"]));
+                    console.log(CountryCode);
+                    $("#"+CountryCode+"Population").html("<p>Population: " + (result["data"][0]["population"]));
+                    $("#"+CountryCode+"Capital").html("<p>Capital City: " + (result["data"][0]["capital"]));
                 }
             }
         
@@ -169,10 +172,9 @@ function GetDetails(CountryCode, IsCurrentLocation){
             console.log(errorThrown);
         }
     });
-    console.log(CountryCode);
 }
+
 function GetExchangeRate(Currency,Location){
-    console.log("test");
     $.ajax({
         url: "PHP/GetExchangeRate.PHP",
         type: 'POST',
@@ -184,15 +186,23 @@ function GetExchangeRate(Currency,Location){
             console.log(result);
 
             if (result.status.name == "ok") {
-                $("#"+Location+"exchangeUSD").html((result["data"]["USD"]).toFixed(2));
-                $("#"+Location+"exchangeGBP").html((result["data"]["GBP"]).toFixed(2));
-                $("#"+Location+"exchangeEUR").html((result["data"]["EUR"]).toFixed(2));
+                // console.log("#"+Location)
+                // console.log((result["data"]["USD"]).toFixed(2));
+                // console.log((result["data"]["GBP"]).toFixed(2));
+                // console.log((result["data"]["EUR"]).toFixed(2));
+                // $("#"+Location).html("<table><thead><tr><th>Currency</th><th>GBP</th><th>USD</th><th>EUR</th></tr></thead><tbody><tr><td>"+Currency+"</td><td>"+(result["data"]["GBP"]).toFixed(2)+"</td><td>"+(result["data"]["USD"]).toFixed(2)+"</td><td>"+(result["data"]["EUR"]).toFixed(2)+"</td></tr></tbody></table>")
+                // $("#CurrentLocation").html("<table><thead><tr><th>Currency</th><th>GBP</th><th>USD</th><th>EUR</th></tr></thead><tbody><tr><td>"+Currency+"</td><td>"+(result["data"]["GBP"]).toFixed(2)+"</td><td>"+(result["data"]["USD"]).toFixed(2)+"</td><td>"+(result["data"]["EUR"]).toFixed(2)+"</td></tr></tbody></table>")
+                content = ("<table><thead><tr><th>Currency</th><th>GBP</th><th>USD</th><th>EUR</th></tr></thead><tbody><tr><td>"+Currency+"</td><td>"+(result["data"]["GBP"]).toFixed(2)+"</td><td>"+(result["data"]["USD"]).toFixed(2)+"</td><td>"+(result["data"]["EUR"]).toFixed(2)+"</td></tr></tbody></table>");
+                // console.log(content);
+                console.log(content);
+                $("#" + Location + "Table").html(content);
                 }
         
         },
         error: function(jqXHR, textStatus, errorThrown) {
             console.log(errorThrown);
         }
+        
     });
 }
 function GetWeather(Capital,Location){
@@ -209,8 +219,10 @@ function GetWeather(Capital,Location){
 
             if (result.status.name == "ok") {
                 var Wimage = result["data"];
-                $("#"+Location+"weather").attr("src", Wimage);
+                // $("#"+Location+"weather").attr("src", Wimage);
                 console.log(result["data"]);
+                content = "<h3>Current Weather</h3><img src='"+ Wimage +"' />";
+                $("#"+Location+"Weather").html(content);
                 }
         
         },
