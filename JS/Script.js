@@ -8,6 +8,8 @@
     accessToken: 'pk.eyJ1IjoiY3JhNzRpZyIsImEiOiJja2c5azJrZGEwMHFoMnNzdzVjZmd5eDJ6In0.bZuD8zD7pmYGbg9tibxE4w'
 }).addTo(mymap);
 
+var markerGroup = L.layerGroup().addTo(mymap);
+
 L.Control.select = L.Control.extend({
     onAdd: function(map) {
         var form = L.DomUtil.create('div');
@@ -27,6 +29,36 @@ L.control.select = function(opts) {
 
 L.control.select({ position: 'topright' }).addTo(mymap);
 
+L.Control.Options = L.Control.extend({
+    onAdd: function(map) {
+        var form = L.DomUtil.create('div');
+        form.id = "OptionsDiv"
+        form.innerHTML = "<nav><input type='button' id='GeoInfo' value='GeoInfo'><input type='button' id='WikiLinks' value='Wikipedia'></nav>";
+        return form;
+    },
+
+    onRemove: function(map) {
+        // Nothing to do here
+    }
+});
+
+L.control.Options = function(opts) {
+    return new L.Control.Options(opts);
+}
+
+L.control.Options({ position: 'bottomleft' }).addTo(mymap);
+$("#WikiLinks").click(function(){
+    $("#WikiLinks").attr("State","Active");
+    L.clearLayers;
+        console.log("show me");
+})
+function GetWikiLinks(CountryCode,IsCurrentLocation){
+    console.log("Getting Wiki Links..." + CountryCode + IsCurrentLocation);
+    if(IsCurrentLocation){
+        $("#CurrentLocation").html("Test");
+    }
+}
+
 //checks if browser supports Geolocation (runs on Current Location icon) 
 $("#CurrentLocation").click(async function(){
     console.log("Getting Current Location");
@@ -42,7 +74,11 @@ $("#CountryChoiceButton").click(function(){
     var Country = $("#CountryChoice").val();
     console.log(Country);
     MoveMapToOptions(Country);
-    GetDetails(Country,false);
+    if($("#WikiLinks").attr("State")==="Active"){
+        GetWikiLinks(Country,false);
+    }else{
+        GetDetails(Country,false);
+    }
 })
 //gets position of client
 function GetCountryCode(position) {
@@ -52,10 +88,7 @@ function GetCountryCode(position) {
     mymap.setView(Corods, 13, {animation: true});
     var marker = L.marker(Corods, {
         title: "Current Location"
-      }).addTo(mymap);
-      
-    //   marker.bindPopup("<table><thead><tr><th>Currency</th><th>GBP</th><th>USD</th><th>EUR</th></tr></thead><tbody><tr><td id='CurrentLocationCurrency'></td><td id='CurrentLocationexchangeGBP'></td><td id='CurrentLocationexchangeUSD'></td><td id='CurrentLocationexchangeEUR'></td></tr></tbody></table>").openPopup();
-    marker.bindPopup("<div id=CurrentLocationCapital></div><div id=CurrentLocationWeather></div><div id=CurrentLocationTable></div><div id=CurrentLocationPopulation></div>",{minWidth: 200, maxWidth:600}).openPopup();
+      }).addTo(markerGroup);
     $.ajax({
         url: "PHP/GetCountry.PHP",
         type: 'POST',
@@ -68,7 +101,13 @@ function GetCountryCode(position) {
             console.log(result);
 
             if (result.status.name == "ok") {
-                GetDetails(result.data,true);
+                if($("#WikiLinks").attr("State")==="Active"){
+                    marker.bindPopup("<div id=CurrentLocation></div>",{minWidth: 200, maxWidth:600,autoclose:false}).openPopup();
+                    GetWikiLinks(result.data,true)
+                }else{
+                    marker.bindPopup("<div id=CurrentLocationCapital value="+result.data+"></div><div id=CurrentLocationWeather></div><div id=CurrentLocationTable></div><div id=CurrentLocationPopulation></div>",{minWidth: 200, maxWidth:600,autoclose:false}).openPopup();
+                    GetDetails(result.data,true);
+                }
 
             }
         
@@ -91,7 +130,7 @@ function MoveMapToOptions(CountryCode){
                 title: "London"
               }).addTo(mymap);
               
-              marker.bindPopup("<div id=GBWeather></div><br/><div id=GBTable></div><br/><div id=GBPopulation></div><br/><div id=GBCapital></div><br/>",{maxWidth: 400,minWidth: 200}).openPopup();
+              marker.bindPopup("<div id=GB><div id=GBWeather></div><br/><div id=GBTable></div><br/><div id=GBPopulation></div><br/><div id=GBCapital></div></div>",{maxWidth: 400,minWidth: 200}).openPopup();
             
             break;
         case CountryCode="USA":
@@ -147,16 +186,9 @@ function GetDetails(CountryCode, IsCurrentLocation){
 
             if (result.status.name == "ok") {
                 if(IsCurrentLocation){
-                    var contents = "<br/>";
-                    // var ExchangeRate = GetExchangeRate(result["data"][0]["currencyCode"],"CurrentLocation");
-                    // console.log(ExchangeRate);
-                    // contents = contents + ExchangeRate;
-                    // contents = contents + GetWeather(result["data"][0]["capital"],"CurrentLocation");
-                    $("#CurrentLocationPopulation").html("<h3>Population: " + (result["data"][0]["population"])+ "</h3>");
-                    $("#CurrentLocationCapital").html("<h3>Capital City: " + (result["data"][0]["capital"])+"</h3>");
-                    // $("#CurrentLocation").html(contents);
+                    $("#CurrentLocationPopulation").html("<p>Population: " + (result["data"][0]["population"])+ "</p>");
+                    $("#CurrentLocationCapital").html("<p>("+CountryCode+") Capital City: " + (result["data"][0]["capital"])+"</p>");
                     console.log(GetExchangeRate(result["data"][0]["currencyCode"],"CurrentLocation"));
-                    // $("#CurrentLocationTable").html(GetExchangeRate(result["data"][0]["currencyCode"],"CurrentLocation"));
                     $("#CurrentLocationWeather").html(GetWeather(result["data"][0]["capital"],"CurrentLocation"));
                 }else{
                     GetExchangeRate(result["data"][0]["currencyCode"],CountryCode);
@@ -221,7 +253,7 @@ function GetWeather(Capital,Location){
                 var Wimage = result["data"];
                 // $("#"+Location+"weather").attr("src", Wimage);
                 console.log(result["data"]);
-                content = "<h3>Current Weather</h3><img src='"+ Wimage +"' />";
+                content = "<p>Current Weather</p><img src='"+ Wimage +"' />";
                 $("#"+Location+"Weather").html(content);
                 }
         
