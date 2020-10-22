@@ -27,6 +27,9 @@ html, body, #map {
     height: 100%;
     width: 100%;
 }
-#CountryFormDiv{
-    max-width: 100%;
+#GeoInfo{
+    background-color: chartreuse;
+}
+div{
+    word-wrap: break-word;
 }
