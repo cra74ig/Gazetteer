@@ -15,7 +15,7 @@ L.Control.select = L.Control.extend({
     onAdd: function(map) {
         var form = L.DomUtil.create('div');
         form.id = "CountryFormDiv"
-        form.innerHTML = "<form><select name='CountryChoice' value='England' id='CountryChoice'><option value='GB'>England</option><option value='USA'>USA</option><option value='FR'>France</option><option value='ES'>Spain</option></select><input type='button' value='Go' id='CountryChoiceButton'></input><img src='Images/location-pointer.svg' alt='Current Location' id='CurrentLocation'></form>";
+        form.innerHTML = "<form><label For='CountryChoice'>Select Country:</label> <select name='CountryChoice' value='England' id='CountryChoice'><option value='GB'>England</option><option value='USA'>USA</option><option value='FR'>France</option><option value='ES'>Spain</option></select><input type='button' value='Go' id='CountryChoiceButton'></input><img src='Images/location-pointer.svg' alt='Current Location' id='CurrentLocation'></form>";
         return form;
     },
 
@@ -34,7 +34,7 @@ L.Control.Options = L.Control.extend({
     onAdd: function(map) {
         var form = L.DomUtil.create('div');
         form.id = "OptionsDiv"
-        form.innerHTML = "<nav><input type='button' id='GeoInfo' value='GeoInfo'><input type='button' id='WikiLinks' value='Wikipedia'></nav>";
+        form.innerHTML = "<nav><input type='button' id='GeoInfo' value='Geographical Information'><input type='button' id='WikiLinks' value='Wikipedia Tourist links'></nav>";
         return form;
     },
 
@@ -108,18 +108,37 @@ function GetWikiLinks(CountryCode,capital,IsCurrentLocation){
             console.log(result);
 
             if (result.status.name == "ok") {
-                content1 = ("<section><h3>"+result['data'][0]['title']+"</h3><a href="+result['data'][0]['wikipediaUrl']+">"+result['data'][0]['wikipediaUrl']+"</a></section>");
-                content2 = ("<section><h3>"+result['data'][01]['title']+"</h3><a href="+result['data'][01]['wikipediaUrl']+">"+result['data'][01]['wikipediaUrl']+"</a></section>");
-                content3 =("<section><h3>"+result['data'][02]['title']+"</h3><a href="+result['data'][02]['wikipediaUrl']+">"+result['data'][02]['wikipediaUrl']+"</a></section>");
+                content1 = ("<section><h3>"+result['data'][0]['title']+"</h3><a href=https://"+result['data'][0]['wikipediaUrl']+">"+result['data'][0]['wikipediaUrl']+"</a></section>");
+                content2 = ("<section><h3>"+result['data'][01]['title']+"</h3><a href=https://"+result['data'][01]['wikipediaUrl']+">"+result['data'][01]['wikipediaUrl']+"</a></section>");
+                content3 =("<section><h3>"+result['data'][02]['title']+"</h3><a href=https://"+result['data'][02]['wikipediaUrl']+">"+result['data'][02]['wikipediaUrl']+"</a></section>");
                 if(IsCurrentLocation){
                     
                     $("#CurrentLocationLink1").html(content1);
                     $("#CurrentLocationLink2").html(content2);
                     $("#CurrentLocationLink3").html(content3);
                 }else{
-                    window.GBwikiLink1 = content1;
-                    window.GBwikiLink2 = content2;
-                    window.GBwikiLink3 = content3;
+                    switch(CountryCode){
+                    case CountryCode="GB":
+                        window.GBwikiLink1 = content1;
+                        window.GBwikiLink2 = content2;
+                        window.GBwikiLink3 = content3;
+                        break;
+                    case CountryCode="USA":
+                        window.USAwikiLink1 = content1;
+                        window.USAwikiLink2 = content2;
+                        window.USAwikiLink3 = content3;
+                        break;
+                    case CountryCode="FR":
+                        window.FRwikiLink1 = content1;
+                        window.FRwikiLink2 = content2;
+                        window.FRwikiLink3 = content3;
+                        break;
+                    case CountryCode="ES":
+                        window.ESwikiLink1 = content1;
+                        window.ESwikiLink2 = content2;
+                        window.ESwikiLink3 = content3;
+                        break;
+                    }
                     MoveMapToOptions(CountryCode);
                     // $("#"+CountryCode+"Link1").html(content1);
                     // $("#"+CountryCode+"Link2").html(content1);
