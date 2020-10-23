@@ -39,7 +39,6 @@ L.Control.Options = L.Control.extend({
     },
 
     onRemove: function(map) {
-        // Nothing to do here
     }
 });
 
@@ -83,19 +82,19 @@ $("#WikiLinks").click(function(){
     $("#GeoInfo").css("background-color", "white")
     $("#WikiLinks").css("background-color", "chartreuse")
     L.clearLayers;
-    console.log("Wiki");
+    
 })
 $("#GeoInfo").click(function(){
     $("#WikiLinks").attr("State","InActive");
     $("#GeoInfo").css("background-color", "chartreuse")
     $("#WikiLinks").css("background-color", "white")
     L.clearLayers;
-    console.log("GeoInfo");
+    
 })
 
 
 function GetWikiLinks(CountryCode,capital,IsCurrentLocation){
-    console.log("Getting Wiki Links..." + CountryCode + IsCurrentLocation);
+    console.log("Getting Wiki Links...");
     $.ajax({
         url: "PHP/GetWikiLinks.PHP",
         type: 'POST',
@@ -105,8 +104,6 @@ function GetWikiLinks(CountryCode,capital,IsCurrentLocation){
             capital: capital
         },
         success: function(result) {
-            console.log(result);
-
             if (result.status.name == "ok") {
                 content1 = ("<h3>Country: "+ CountryCode +" (Capital: "+ capital +")</h3><section><h3>"+result['data'][0]['title']+"</h3><a href=https://"+result['data'][0]['wikipediaUrl']+">"+result['data'][0]['wikipediaUrl']+"</a></section>");
                 content2 = ("<section><h3>"+result['data'][01]['title']+"</h3><a href=https://"+result['data'][01]['wikipediaUrl']+">"+result['data'][01]['wikipediaUrl']+"</a></section>");
@@ -140,9 +137,7 @@ function GetWikiLinks(CountryCode,capital,IsCurrentLocation){
                         break;
                     }
                     MoveMapToOptions(CountryCode);
-                    // $("#"+CountryCode+"Link1").html(content1);
-                    // $("#"+CountryCode+"Link2").html(content1);
-                    // $("#"+CountryCode+"Link3").html(content1);
+
                 }
                 }
         
@@ -168,15 +163,7 @@ $("#CurrentLocation").click(async function(){
 $("#CountryChoiceButton").click(async function(){
     console.log("Getting Details For Selected Location");
     var Country = $("#CountryChoice").val();
-    console.log(Country);
-    
-    if($("#WikiLinks").attr("State")==="Active"){
-        GetDetails(Country,false);
-        
-    }else{
-        GetDetails(Country,false);
-        
-    }
+    GetDetails(Country,false);
 })
 //gets position of client
 function GetCountryCode(position) {
@@ -197,7 +184,7 @@ function GetCountryCode(position) {
             longitude: x
         },
         success: function(result) {
-            console.log(result);
+            
 
             if (result.status.name == "ok") {
                 if($("#WikiLinks").attr("State")==="Active"){
@@ -225,7 +212,7 @@ function MoveMapToOptions(CountryCode){
             x= parseFloat("-0.1278");
             var markerCorods = new L.LatLng(y,x);
             var Corods = new L.LatLng(y+0.005,x);
-            console.log(Corods);
+            
             mymap.setView(Corods, 15, {animation: true});
             var marker = L.marker(markerCorods, {
                 title: "London"
@@ -239,7 +226,7 @@ function MoveMapToOptions(CountryCode){
         case CountryCode="USA":
             y=38.9072;
             x= parseFloat("-77.0369");
-            console.log(x + " " + y);
+            
             var markerCorods = new L.LatLng(y,x);
             var Corods = new L.LatLng(y+0.005,x);
             mymap.setView(Corods, 15, {animation: true});
@@ -256,7 +243,6 @@ function MoveMapToOptions(CountryCode){
         case CountryCode="FR":
             y=48.8566;
             x= parseFloat("2.3522");
-            console.log(x + " " + y);
             var markerCorods = new L.LatLng(y,x);
             var Corods = new L.LatLng(y+0.005,x);
             mymap.setView(Corods, 15, {animation: true});
@@ -273,7 +259,7 @@ function MoveMapToOptions(CountryCode){
         case CountryCode="ES":
             y=40.4168;
             x= parseFloat("-3.7038");
-            console.log(x + " " + y);
+            
             var markerCorods = new L.LatLng(y,x);
             var Corods = new L.LatLng(y+0.005,x);
             mymap.setView(Corods, 15, {animation: true});
@@ -299,7 +285,7 @@ async function GetDetails(CountryCode, IsCurrentLocation){
             country: CountryCode,
         },
         success: function(result) {
-            console.log(result);
+            
 
             if (result.status.name == "ok") {               
                 if(IsCurrentLocation){
@@ -357,12 +343,10 @@ function GetExchangeRate(Currency,Location){
             currency: Currency,
         },
         success: function(result) {
-            console.log(result);
+            
 
             if (result.status.name == "ok") {
                 content = ("<table><thead><tr><th>Currency</th><th>GBP</th><th>USD</th><th>EUR</th></tr></thead><tbody><tr><td>"+Currency+"</td><td>"+(result["data"]["GBP"]).toFixed(2)+"</td><td>"+(result["data"]["USD"]).toFixed(2)+"</td><td>"+(result["data"]["EUR"]).toFixed(2)+"</td></tr></tbody></table>");
-                
-                console.log(content);
                 switch(Location){
                     case Location="GB":
                         window.GBEconomics = content;
@@ -389,7 +373,7 @@ function GetExchangeRate(Currency,Location){
     });
 }
 function GetWeather(Capital,Location){
-    console.log(Capital)
+    
     $.ajax({
         url: "PHP/GetWeather.PHP",
         type: 'POST',
@@ -398,7 +382,7 @@ function GetWeather(Capital,Location){
             capital: Capital,
         },
         success: function(result) {
-            console.log(result);
+            
 
             if (result.status.name == "ok") {
                 var Wimage = result["data"];
