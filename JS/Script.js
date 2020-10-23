@@ -34,7 +34,7 @@ L.Control.Options = L.Control.extend({
     onAdd: function(map) {
         var form = L.DomUtil.create('div');
         form.id = "OptionsDiv"
-        form.innerHTML = "<nav><input type='button' id='GeoInfo' value='Geographical Information'><input type='button' id='WikiLinks' value='Wikipedia Tourist links'></nav>";
+        form.innerHTML = "<nav><input type='button' id='GeoInfo' value='Geographical Information'><br/><input type='button' id='WikiLinks' value='Wikipedia Tourist links'></nav>";
         return form;
     },
 
@@ -108,7 +108,7 @@ function GetWikiLinks(CountryCode,capital,IsCurrentLocation){
             console.log(result);
 
             if (result.status.name == "ok") {
-                content1 = ("<section><h3>"+result['data'][0]['title']+"</h3><a href=https://"+result['data'][0]['wikipediaUrl']+">"+result['data'][0]['wikipediaUrl']+"</a></section>");
+                content1 = ("<h3>Country: "+ CountryCode +" (Capital: "+ capital +")</h3><section><h3>"+result['data'][0]['title']+"</h3><a href=https://"+result['data'][0]['wikipediaUrl']+">"+result['data'][0]['wikipediaUrl']+"</a></section>");
                 content2 = ("<section><h3>"+result['data'][01]['title']+"</h3><a href=https://"+result['data'][01]['wikipediaUrl']+">"+result['data'][01]['wikipediaUrl']+"</a></section>");
                 content3 =("<section><h3>"+result['data'][02]['title']+"</h3><a href=https://"+result['data'][02]['wikipediaUrl']+">"+result['data'][02]['wikipediaUrl']+"</a></section>");
                 if(IsCurrentLocation){
@@ -182,9 +182,10 @@ $("#CountryChoiceButton").click(async function(){
 function GetCountryCode(position) {
     var x = position.coords.longitude;
     var y = position.coords.latitude;
-    var Corods = new L.LatLng(y,x)
-    mymap.setView(Corods, 13, {animation: true});
-    var marker = L.marker(Corods, {
+    var markerCorods = new L.LatLng(y,x)
+    var Corods = new L.LatLng(y+0.005,x)
+    mymap.setView(Corods, 15, {animation: true});
+    var marker = L.marker(markerCorods, {
         title: "Current Location"
       }).addTo(markerGroup);
     $.ajax({
@@ -201,7 +202,7 @@ function GetCountryCode(position) {
             if (result.status.name == "ok") {
                 if($("#WikiLinks").attr("State")==="Active"){
                     marker.bindPopup("<div id=CurrentLocationLink1></div><div id=CurrentLocationLink2></div><div id=CurrentLocationLink3></div>",{minWidth: 200, maxWidth:600,autoclose:false}).openPopup();
-                    var capital=GetDetails(result.data,true)
+                    GetDetails(result.data,true)
                     
                 }else{
                     marker.bindPopup("<div id=CurrentLocationCapital value="+result.data+"></div><div id=CurrentLocationWeather></div><div id=CurrentLocationTable></div><div id=CurrentLocationPopulation></div>",{minWidth: 200, maxWidth:600,autoclose:false}).openPopup();
@@ -222,31 +223,33 @@ function MoveMapToOptions(CountryCode){
         case CountryCode="GB":
             y=51.5074;
             x= parseFloat("-0.1278");
-            var Corods = new L.LatLng(y,x);
+            var markerCorods = new L.LatLng(y,x);
+            var Corods = new L.LatLng(y+0.005,x);
             console.log(Corods);
-            mymap.setView(Corods, 11, {animation: true});
-            var marker = L.marker(Corods, {
+            mymap.setView(Corods, 15, {animation: true});
+            var marker = L.marker(markerCorods, {
                 title: "London"
               }).addTo(mymap);
               if($("#WikiLinks").attr("State")==="Active"){
                   marker.bindPopup("<div id=GBLink1>"+GBwikiLink1+"</div><div id=GBLink2>"+GBwikiLink2+"</div><div id=GBLink3>"+GBwikiLink3+"</div>",{maxWidth: 600,minWidth: 200,autoclose:false}).openPopup();
               }else{
-                marker.bindPopup("<div id=GBWeather>"+GBWeather+"</div><div id=GBTable>"+GBEconomics+"</div><div id=GBPopulation>"+GBPopulation+"</div><div id=GBCapital>"+GBCapital+"</div>",{maxWidth: 600,minWidth: 200,autoclose:false}).openPopup();
+                marker.bindPopup("<div id=GBCapital>"+GBCapital+"</div><div id=GBWeather>"+GBWeather+"</div><div id=GBTable>"+GBEconomics+"</div><div id=GBPopulation>"+GBPopulation+"</div>",{maxWidth: 600,minWidth: 200,autoclose:false}).openPopup();
               }
             break;
         case CountryCode="USA":
             y=38.9072;
             x= parseFloat("-77.0369");
             console.log(x + " " + y);
-            var Corods = new L.LatLng(y,x);
-            mymap.setView(Corods, 11, {animation: true});
-            var marker = L.marker(Corods, {
+            var markerCorods = new L.LatLng(y,x);
+            var Corods = new L.LatLng(y+0.005,x);
+            mymap.setView(Corods, 15, {animation: true});
+            var marker = L.marker(markerCorods, {
                 title: "Washington DC"
               }).addTo(mymap);
               if($("#WikiLinks").attr("State")==="Active"){
                 marker.bindPopup("<div id=USALink1>"+USAwikiLink1+"</div><div id=USALink2>"+USAwikiLink2+"</div><div id=USALink3>"+USAwikiLink3+"</div>",{maxWidth: 600,minWidth: 200,autoclose:false}).openPopup();
             }else{
-              marker.bindPopup("<div id=USAWeather>"+USAWeather+"</div><div id=USATable>"+USAEconomics+"</div><div id=USAPopulation>"+USAPopulation+"</div><div id=USACapital>"+USACapital+"</div>",{maxWidth: 600,minWidth: 200,autoclose:false}).openPopup();
+              marker.bindPopup("<div id=USACapital>"+USACapital+"</div><div id=USAWeather>"+USAWeather+"</div><div id=USATable>"+USAEconomics+"</div><div id=USAPopulation>"+USAPopulation+"</div>",{maxWidth: 600,minWidth: 200,autoclose:false}).openPopup();
             }
               
             break;
@@ -254,15 +257,16 @@ function MoveMapToOptions(CountryCode){
             y=48.8566;
             x= parseFloat("2.3522");
             console.log(x + " " + y);
-            var Corods = new L.LatLng(y,x);
-            mymap.setView(Corods, 11, {animation: true});
-            var marker = L.marker(Corods, {
+            var markerCorods = new L.LatLng(y,x);
+            var Corods = new L.LatLng(y+0.005,x);
+            mymap.setView(Corods, 15, {animation: true});
+            var marker = L.marker(markerCorods, {
                 title: "Paris"
               }).addTo(mymap);
             if($("#WikiLinks").attr("State")==="Active"){
                 marker.bindPopup("<div id=FRLink1>"+FRwikiLink1+"</div><div id=FRLink2>"+FRwikiLink2+"</div><div id=FRLink3>"+FRwikiLink3+"</div>",{maxWidth: 600,minWidth: 200,autoclose:false}).openPopup();
             }else{
-              marker.bindPopup("<div id=FRWeather>"+FRWeather+"</div><div id=FRTable>"+FREconomics+"</div><div id=FRPopulation>"+FRPopulation+"</div><div id=FRCapital>"+FRCapital+"</div>",{maxWidth: 600,minWidth: 200,autoclose:false}).openPopup();
+              marker.bindPopup("<div id=FRCapital>"+FRCapital+"</div><div id=FRWeather>"+FRWeather+"</div><div id=FRTable>"+FREconomics+"</div><div id=FRPopulation>"+FRPopulation+"</div>",{maxWidth: 600,minWidth: 200,autoclose:false}).openPopup();
             }
               
             break;
@@ -270,15 +274,16 @@ function MoveMapToOptions(CountryCode){
             y=40.4168;
             x= parseFloat("-3.7038");
             console.log(x + " " + y);
-            var Corods = new L.LatLng(y,x);
-            mymap.setView(Corods, 11, {animation: true});
-            var marker = L.marker(Corods, {
+            var markerCorods = new L.LatLng(y,x);
+            var Corods = new L.LatLng(y+0.005,x);
+            mymap.setView(Corods, 15, {animation: true});
+            var marker = L.marker(markerCorods, {
                 title: "Madrid"
               }).addTo(mymap);
             if($("#WikiLinks").attr("State")==="Active"){
                 marker.bindPopup("<div id=ESLink1>"+ESwikiLink1+"</div><div id=ESLink2>"+ESwikiLink2+"</div><div id=ESLink3>"+ESwikiLink3+"</div>",{maxWidth: 600,minWidth: 200,autoclose:false}).openPopup();
             }else{
-              marker.bindPopup("<div id=ESWeather>"+ESWeather+"</div><div id=ESTable>"+ESEconomics+"</div><div id=ESPopulation>"+ESPopulation+"</div><div id=ESCapital>"+ESCapital+"</div>",{maxWidth: 600,minWidth: 200,autoclose:false}).openPopup();
+              marker.bindPopup("<div id=ESCapital>"+ESCapital+"</div><div id=ESWeather>"+ESWeather+"</div><div id=ESTable>"+ESEconomics+"</div><div id=ESPopulation>"+ESPopulation+"</div>",{maxWidth: 600,minWidth: 200,autoclose:false}).openPopup();
             }            
             break;
         
@@ -301,8 +306,8 @@ async function GetDetails(CountryCode, IsCurrentLocation){
                     if($("#WikiLinks").attr("State")==="Active"){
                         GetWikiLinks(CountryCode,result["data"][0]["capital"],true)
                     }else{
-                        $("#CurrentLocationPopulation").html("<p>Population: " + (result["data"][0]["population"])+ "</p>");
                         $("#CurrentLocationCapital").html("<p>("+CountryCode+") Capital City: " + (result["data"][0]["capital"])+"</p>");
+                        $("#CurrentLocationPopulation").html("<p>Population: " + (result["data"][0]["population"])+ "</p>");
                         GetExchangeRate(result["data"][0]["currencyCode"],"CurrentLocation");
                         $("#CurrentLocationWeather").html(GetWeather(result["data"][0]["capital"],"CurrentLocation"));
                     }
@@ -311,7 +316,7 @@ async function GetDetails(CountryCode, IsCurrentLocation){
                         GetWikiLinks(CountryCode,result["data"][0]["capital"],false)
                     }else{
                         popContent = "<p>Population: " + (result["data"][0]["population"]);
-                        capitalContent  = "<p>Capital City: " + (result["data"][0]["capital"]);
+                        capitalContent  = "<p>("+CountryCode+") Capital City: " + (result["data"][0]["capital"]);
                         switch(CountryCode){
                             case CountryCode="GB":
                                 window.GBPopulation = popContent;
