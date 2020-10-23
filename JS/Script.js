@@ -5,7 +5,8 @@
     id: 'mapbox/streets-v11',
     tileSize: 512,
     zoomOffset: -1,
-    accessToken: 'pk.eyJ1IjoiY3JhNzRpZyIsImEiOiJja2c5azJrZGEwMHFoMnNzdzVjZmd5eDJ6In0.bZuD8zD7pmYGbg9tibxE4w'
+    accessToken: 'pk.eyJ1IjoiY3JhNzRpZyIsImEiOiJja2c5azJrZGEwMHFoMnNzdzVjZmd5eDJ6In0.bZuD8zD7pmYGbg9tibxE4w',
+    closePopupOnClick:false
 }).addTo(mymap);
 
 var markerGroup = L.layerGroup().addTo(mymap);
@@ -46,19 +47,95 @@ L.control.Options = function(opts) {
     return new L.Control.Options(opts);
 }
 
-L.control.Options({ position: 'bottomleft' }).addTo(mymap);
+L.control.Options({ position: 'topleft' }).addTo(mymap);
+
+var GBwikiLink1;
+var GBwikiLink2;
+var GBwikiLink3;
+var GBEconomics;
+var GBWeather;
+var GBCapital;
+var GBPopulation;
+var USAwikiLink1;
+var USAwikiLink2;
+var USAwikiLink3;
+var USAEconomics;
+var USAWeather;
+var USACapital;
+var USAPopulation;
+var FRwikiLink1;
+var FRwikiLink2;
+var FRwikiLink3;
+var FREconomics;
+var FRWeather;
+var FRCapital;
+var FRPopulation;
+var ESwikiLink1;
+var ESwikiLink2;
+var ESwikiLink3;
+var ESEconomics;
+var ESWeather;
+var ESCapital;
+var ESPopulation;
+
 $("#WikiLinks").click(function(){
     $("#WikiLinks").attr("State","Active");
+    $("#GeoInfo").css("background-color", "white")
+    $("#WikiLinks").css("background-color", "chartreuse")
     L.clearLayers;
-        console.log("show me");
+    console.log("Wiki");
 })
-function GetWikiLinks(CountryCode,IsCurrentLocation){
-    console.log("Getting Wiki Links..." + CountryCode + IsCurrentLocation);
-    if(IsCurrentLocation){
-        $("#CurrentLocation").html("Test");
-    }
-}
+$("#GeoInfo").click(function(){
+    $("#WikiLinks").attr("State","InActive");
+    $("#GeoInfo").css("background-color", "chartreuse")
+    $("#WikiLinks").css("background-color", "white")
+    L.clearLayers;
+    console.log("GeoInfo");
+})
 
+
+function GetWikiLinks(CountryCode,capital,IsCurrentLocation){
+    console.log("Getting Wiki Links..." + CountryCode + IsCurrentLocation);
+    $.ajax({
+        url: "PHP/GetWikiLinks.PHP",
+        type: 'POST',
+        dataType: 'json',
+        data: {
+            country: CountryCode,
+            capital: capital
+        },
+        success: function(result) {
+            console.log(result);
+
+            if (result.status.name == "ok") {
+                content1 = ("<section><h3>"+result['data'][0]['title']+"</h3><a href="+result['data'][0]['wikipediaUrl']+">"+result['data'][0]['wikipediaUrl']+"</a></section>");
+                content2 = ("<section><h3>"+result['data'][01]['title']+"</h3><a href="+result['data'][01]['wikipediaUrl']+">"+result['data'][01]['wikipediaUrl']+"</a></section>");
+                content3 =("<section><h3>"+result['data'][02]['title']+"</h3><a href="+result['data'][02]['wikipediaUrl']+">"+result['data'][02]['wikipediaUrl']+"</a></section>");
+                if(IsCurrentLocation){
+                    
+                    $("#CurrentLocationLink1").html(content1);
+                    $("#CurrentLocationLink2").html(content2);
+                    $("#CurrentLocationLink3").html(content3);
+                }else{
+                    window.GBwikiLink1 = content1;
+                    window.GBwikiLink2 = content2;
+                    window.GBwikiLink3 = content3;
+                    MoveMapToOptions(CountryCode);
+                    // $("#"+CountryCode+"Link1").html(content1);
+                    // $("#"+CountryCode+"Link2").html(content1);
+                    // $("#"+CountryCode+"Link3").html(content1);
+                }
+                }
+        
+        },
+        error: function(jqXHR, textStatus, errorThrown) {
+            console.log(errorThrown);
+        }
+        
+    });
+
+}
+    
 //checks if browser supports Geolocation (runs on Current Location icon) 
 $("#CurrentLocation").click(async function(){
     console.log("Getting Current Location");
@@ -69,15 +146,17 @@ $("#CurrentLocation").click(async function(){
       }
 })
 //Sends country to get details (using country code)
-$("#CountryChoiceButton").click(function(){
+$("#CountryChoiceButton").click(async function(){
     console.log("Getting Details For Selected Location");
     var Country = $("#CountryChoice").val();
     console.log(Country);
-    MoveMapToOptions(Country);
+    
     if($("#WikiLinks").attr("State")==="Active"){
-        GetWikiLinks(Country,false);
+        GetDetails(Country,false);
+        
     }else{
         GetDetails(Country,false);
+        
     }
 })
 //gets position of client
@@ -102,8 +181,9 @@ function GetCountryCode(position) {
 
             if (result.status.name == "ok") {
                 if($("#WikiLinks").attr("State")==="Active"){
-                    marker.bindPopup("<div id=CurrentLocation></div>",{minWidth: 200, maxWidth:600,autoclose:false}).openPopup();
-                    GetWikiLinks(result.data,true)
+                    marker.bindPopup("<div id=CurrentLocationLink1></div><div id=CurrentLocationLink2></div><div id=CurrentLocationLink3></div>",{minWidth: 200, maxWidth:600,autoclose:false}).openPopup();
+                    var capital=GetDetails(result.data,true)
+                    
                 }else{
                     marker.bindPopup("<div id=CurrentLocationCapital value="+result.data+"></div><div id=CurrentLocationWeather></div><div id=CurrentLocationTable></div><div id=CurrentLocationPopulation></div>",{minWidth: 200, maxWidth:600,autoclose:false}).openPopup();
                     GetDetails(result.data,true);
@@ -129,9 +209,11 @@ function MoveMapToOptions(CountryCode){
             var marker = L.marker(Corods, {
                 title: "London"
               }).addTo(mymap);
-              
-              marker.bindPopup("<div id=GB><div id=GBWeather></div><br/><div id=GBTable></div><br/><div id=GBPopulation></div><br/><div id=GBCapital></div></div>",{maxWidth: 400,minWidth: 200}).openPopup();
-            
+              if($("#WikiLinks").attr("State")==="Active"){
+                  marker.bindPopup("<div id=GBLink1>"+GBwikiLink1+"</div><div id=GBLink2>"+GBwikiLink2+"</div><div id=GBLink3>"+GBwikiLink3+"</div>",{maxWidth: 600,minWidth: 200,autoclose:false}).openPopup();
+              }else{
+                marker.bindPopup("<div id=GBWeather>"+GBWeather+"</div><div id=GBTable>"+GBEconomics+"</div><div id=GBPopulation>"+GBPopulation+"</div><div id=GBCapital>"+GBCapital+"</div>",{maxWidth: 600,minWidth: 200,autoclose:false}).openPopup();
+              }
             break;
         case CountryCode="USA":
             y=38.9072;
@@ -142,8 +224,12 @@ function MoveMapToOptions(CountryCode){
             var marker = L.marker(Corods, {
                 title: "Washington DC"
               }).addTo(mymap);
+              if($("#WikiLinks").attr("State")==="Active"){
+                marker.bindPopup("<div id=USALink1>"+USAwikiLink1+"</div><div id=USALink2>"+USAwikiLink2+"</div><div id=USALink3>"+USAwikiLink3+"</div>",{maxWidth: 600,minWidth: 200,autoclose:false}).openPopup();
+            }else{
+              marker.bindPopup("<div id=USAWeather>"+USAWeather+"</div><div id=USATable>"+USAEconomics+"</div><div id=USAPopulation>"+USAPopulation+"</div><div id=USACapital>"+USACapital+"</div>",{maxWidth: 600,minWidth: 200,autoclose:false}).openPopup();
+            }
               
-              marker.bindPopup("<div id=USAWeather></div><br/><div id=USATable></div><br/><div id=USAPopulation></div><br/><div id=USACapital></div><br/>",{maxWidth: 400,minWidth: 200}).openPopup();
             break;
         case CountryCode="FR":
             y=48.8566;
@@ -154,8 +240,12 @@ function MoveMapToOptions(CountryCode){
             var marker = L.marker(Corods, {
                 title: "Paris"
               }).addTo(mymap);
+            if($("#WikiLinks").attr("State")==="Active"){
+                marker.bindPopup("<div id=FRLink1>"+FRwikiLink1+"</div><div id=FRLink2>"+FRwikiLink2+"</div><div id=FRLink3>"+FRwikiLink3+"</div>",{maxWidth: 600,minWidth: 200,autoclose:false}).openPopup();
+            }else{
+              marker.bindPopup("<div id=FRWeather>"+FRWeather+"</div><div id=FRTable>"+FREconomics+"</div><div id=FRPopulation>"+FRPopulation+"</div><div id=FRCapital>"+FRCapital+"</div>",{maxWidth: 600,minWidth: 200,autoclose:false}).openPopup();
+            }
               
-              marker.bindPopup("<div id=FRWeather></div><br/><div id=FRTable></div><br/><div id=FRPopulation></div><br/><div id=FRCapital></div><br/>",{maxWidth: 400,minWidth: 200}).openPopup();
             break;
         case CountryCode="ES":
             y=40.4168;
@@ -166,16 +256,19 @@ function MoveMapToOptions(CountryCode){
             var marker = L.marker(Corods, {
                 title: "Madrid"
               }).addTo(mymap);
-              
-              marker.bindPopup("<div id=ESWeather></div><br/><div id=ESTable></div><br/><div id=ESPopulation></div><br/><div id=ESCapital></div><br/>",{maxWidth: 400,minWidth: 200}).openPopup();
+            if($("#WikiLinks").attr("State")==="Active"){
+                marker.bindPopup("<div id=ESLink1>"+ESwikiLink1+"</div><div id=ESLink2>"+ESwikiLink2+"</div><div id=ESLink3>"+ESwikiLink3+"</div>",{maxWidth: 600,minWidth: 200,autoclose:false}).openPopup();
+            }else{
+              marker.bindPopup("<div id=ESWeather>"+ESWeather+"</div><div id=ESTable>"+ESEconomics+"</div><div id=ESPopulation>"+ESPopulation+"</div><div id=ESCapital>"+ESCapital+"</div>",{maxWidth: 600,minWidth: 200,autoclose:false}).openPopup();
+            }            
             break;
         
     }
 }
 //Reaches to other API/PHP files and shows data on page.
-function GetDetails(CountryCode, IsCurrentLocation){
+async function GetDetails(CountryCode, IsCurrentLocation){
     $.ajax({
-        url: "PHP/GetCountryinfo.PHP",
+        url: "PHP/GetCountryInfo.PHP",
         type: 'POST',
         dataType: 'json',
         data: {
@@ -184,21 +277,46 @@ function GetDetails(CountryCode, IsCurrentLocation){
         success: function(result) {
             console.log(result);
 
-            if (result.status.name == "ok") {
+            if (result.status.name == "ok") {               
                 if(IsCurrentLocation){
-                    $("#CurrentLocationPopulation").html("<p>Population: " + (result["data"][0]["population"])+ "</p>");
-                    $("#CurrentLocationCapital").html("<p>("+CountryCode+") Capital City: " + (result["data"][0]["capital"])+"</p>");
-                    console.log(GetExchangeRate(result["data"][0]["currencyCode"],"CurrentLocation"));
-                    $("#CurrentLocationWeather").html(GetWeather(result["data"][0]["capital"],"CurrentLocation"));
+                    if($("#WikiLinks").attr("State")==="Active"){
+                        GetWikiLinks(CountryCode,result["data"][0]["capital"],true)
+                    }else{
+                        $("#CurrentLocationPopulation").html("<p>Population: " + (result["data"][0]["population"])+ "</p>");
+                        $("#CurrentLocationCapital").html("<p>("+CountryCode+") Capital City: " + (result["data"][0]["capital"])+"</p>");
+                        GetExchangeRate(result["data"][0]["currencyCode"],"CurrentLocation");
+                        $("#CurrentLocationWeather").html(GetWeather(result["data"][0]["capital"],"CurrentLocation"));
+                    }
                 }else{
-                    GetExchangeRate(result["data"][0]["currencyCode"],CountryCode);
-                    GetWeather(result["data"][0]["capital"],CountryCode);
-                    console.log(CountryCode);
-                    $("#"+CountryCode+"Population").html("<p>Population: " + (result["data"][0]["population"]));
-                    $("#"+CountryCode+"Capital").html("<p>Capital City: " + (result["data"][0]["capital"]));
+                    if($("#WikiLinks").attr("State")==="Active"){
+                        GetWikiLinks(CountryCode,result["data"][0]["capital"],false)
+                    }else{
+                        popContent = "<p>Population: " + (result["data"][0]["population"]);
+                        capitalContent  = "<p>Capital City: " + (result["data"][0]["capital"]);
+                        switch(CountryCode){
+                            case CountryCode="GB":
+                                window.GBPopulation = popContent;
+                                window.GBCapital = capitalContent;
+                                break;
+                            case CountryCode="USA":
+                                window.USAPopulation = popContent;
+                                window.USACapital = capitalContent;
+                                break;
+                            case CountryCode="FR":
+                                window.FRPopulation = popContent;
+                                window.FRCapital = capitalContent;
+                                break;
+                            case CountryCode="ES":
+                                window.ESPopulation = popContent;
+                                window.ESCapital = capitalContent;
+                                break;
+                        }
+                        GetExchangeRate(result["data"][0]["currencyCode"],CountryCode);
+                        GetWeather(result["data"][0]["capital"],CountryCode);
+
+                    }
                 }
-            }
-        
+            } 
         },
         error: function(jqXHR, textStatus, errorThrown) {
             console.log(errorThrown);
@@ -218,18 +336,27 @@ function GetExchangeRate(Currency,Location){
             console.log(result);
 
             if (result.status.name == "ok") {
-                // console.log("#"+Location)
-                // console.log((result["data"]["USD"]).toFixed(2));
-                // console.log((result["data"]["GBP"]).toFixed(2));
-                // console.log((result["data"]["EUR"]).toFixed(2));
-                // $("#"+Location).html("<table><thead><tr><th>Currency</th><th>GBP</th><th>USD</th><th>EUR</th></tr></thead><tbody><tr><td>"+Currency+"</td><td>"+(result["data"]["GBP"]).toFixed(2)+"</td><td>"+(result["data"]["USD"]).toFixed(2)+"</td><td>"+(result["data"]["EUR"]).toFixed(2)+"</td></tr></tbody></table>")
-                // $("#CurrentLocation").html("<table><thead><tr><th>Currency</th><th>GBP</th><th>USD</th><th>EUR</th></tr></thead><tbody><tr><td>"+Currency+"</td><td>"+(result["data"]["GBP"]).toFixed(2)+"</td><td>"+(result["data"]["USD"]).toFixed(2)+"</td><td>"+(result["data"]["EUR"]).toFixed(2)+"</td></tr></tbody></table>")
                 content = ("<table><thead><tr><th>Currency</th><th>GBP</th><th>USD</th><th>EUR</th></tr></thead><tbody><tr><td>"+Currency+"</td><td>"+(result["data"]["GBP"]).toFixed(2)+"</td><td>"+(result["data"]["USD"]).toFixed(2)+"</td><td>"+(result["data"]["EUR"]).toFixed(2)+"</td></tr></tbody></table>");
-                // console.log(content);
+                
                 console.log(content);
-                $("#" + Location + "Table").html(content);
+                switch(Location){
+                    case Location="GB":
+                        window.GBEconomics = content;
+                        break;
+                    case Location="USA":
+                        window.USAEconomics = content;
+                        break;
+                    case Location="FR":
+                        window.FREconomics = content;
+                        break;
+                    case Location="ES":
+                        window.ESEconomics = content;
+                        break;
+                    case Location="CurrentLocation":
+                        $("#CurrentLocationTable").html(content);
+                        break;
                 }
-        
+            }
         },
         error: function(jqXHR, textStatus, errorThrown) {
             console.log(errorThrown);
@@ -251,12 +378,30 @@ function GetWeather(Capital,Location){
 
             if (result.status.name == "ok") {
                 var Wimage = result["data"];
-                // $("#"+Location+"weather").attr("src", Wimage);
-                console.log(result["data"]);
                 content = "<p>Current Weather</p><img src='"+ Wimage +"' />";
-                $("#"+Location+"Weather").html(content);
+                switch(Location){
+                    case Location="GB":
+                        window.GBWeather = content;
+                        MoveMapToOptions(Location);
+                        break;
+                    case Location="USA":
+                        window.USAWeather = content;
+                        MoveMapToOptions(Location);
+                        break;
+                    case Location="FR":
+                        window.FRWeather = content;
+                        MoveMapToOptions(Location);
+                        break;
+                    case Location="ES":
+                        window.ESWeather = content;
+                        MoveMapToOptions(Location);
+                        break;
+                    case Location="CurrentLocation":
+                        $("#CurrentLocationWeather").html(content);
+                        break;
                 }
-        
+                
+            }
         },
         error: function(jqXHR, textStatus, errorThrown) {
             console.log(errorThrown);
