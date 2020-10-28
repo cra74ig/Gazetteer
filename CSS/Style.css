@@ -1,6 +1,6 @@
 #CurrentLocation{
-    max-height: 20px;
-    max-width: 20px;
+    max-height: 25px;
+    max-width: 25px;
     
 }
 #CurrentLocation:hover{
@@ -9,9 +9,13 @@
 input[Type="button"]{
     cursor: pointer;
 }
-select{
-    width:70%;
+@media only screen and (min-width: 700px){
+
+
 }
+
+   
+
 select:hover{
     cursor: pointer;
 }
@@ -30,6 +34,26 @@ html, body, #map {
 #GeoInfo{
     background-color: chartreuse;
 }
+#WikiLinks{
+    background-color: slategray;
+    color: snow;
+}
 div{
     word-wrap: break-word;
+}
+#navBar{
+    z-index: 8000;
+    background-color: slategray;
+    position: fixed;
+    top: 0;
+    width: 100%;
+}
+.leaflet-right{
+    width: 50%;
+}
+.leaflet-control{
+    width: 100%;
+}
+.input-group{
+    width: 100%;
 }
