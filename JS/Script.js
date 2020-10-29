@@ -47,6 +47,7 @@ $(document).ready(function(){
                 }));
                     
                 }
+
                 
             }
         
@@ -59,6 +60,8 @@ $(document).ready(function(){
 })
 $("#CountryChoice").change(function(){
     console.log("countryChange")
+    console.log($("#CountryChoice :selected").val())
+    main($("#CountryChoice :selected").val())
 })
     
 //checks if browser supports Geolocation (runs on Current Location icon) 
@@ -73,7 +76,40 @@ function CurrentPosition(){
         alert( "Geolocation is not supported by this browser." );
       }
 }
+function main(countryCode){
+    $.ajax({
+        url: "PHP/Main.PHP",
+        type: 'POST',
+        dataType: 'json',
+        data: {
+            countryCode: countryCode
+        },
+        success: function(result) {
+            
 
+            if (result.status.name == "ok") {
+                console.log(result.data["coords"]);
+                var polygon = L.polygon(result.data["coords"], {color: 'red'}).addTo(mymap);
+
+                // zoom the map to the polyline
+                mymap.fitBounds(polygon.getBounds());
+                // // Creating multi polygon options
+                // var multiPolygonOptions = {color:'red'};
+
+                // // Creating multi polygon
+                // var multipolygon = L.multiPolygon(result.data["coords"] , multiPolygonOptions);
+                // // Adding multi polygon to map
+                // multipolygon.addTo(map);
+                
+
+            }
+        
+        },
+        error: function(jqXHR, textStatus, errorThrown) {
+            console.log(errorThrown);
+        }
+    });
+}
 //gets position of client
 function GetCountryCode(position) {
     var x = position.coords.longitude;
@@ -99,7 +135,8 @@ function GetCountryCode(position) {
                 console.log(result.data);
 
                 $('#CountryChoice').val(result.data);
-                GetDetails(result.data,true);
+                main(result.data);
+                
 
             }
         
