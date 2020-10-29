@@ -1,4 +1,4 @@
-    var mymap = L.map('mapid').setView([51.505, -0.09], 11);
+    var mymap = L.map('mapid',{zoomControl:false}).setView([51.505, -0.09], 11);
     L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}', {
     attribution: "<div>Icons made by <a href='https://www.flaticon.com/authors/freepik' title='Freepik'>Freepik</a> from <a href='https://www.flaticon.com/' title='Flaticon'>www.flaticon.com</a><br/>Map data &copy <a href='https://www.openstreetmap.org/'>OpenStreetMap</a> contributors, <a href='https://creativecommons.org/licenses/by-sa/2.0/'>CC-BY-SA</a>, Imagery © <a href='https://www.mapbox.com/'>Mapbox</a></div>",
     maxZoom: 18,
@@ -6,7 +6,7 @@
     tileSize: 512,
     zoomOffset: -1,
     accessToken: 'pk.eyJ1IjoiY3JhNzRpZyIsImEiOiJja2c5azJrZGEwMHFoMnNzdzVjZmd5eDJ6In0.bZuD8zD7pmYGbg9tibxE4w',
-    closePopupOnClick:false
+    closePopupOnClick:false,
 }).addTo(mymap);
 
 var markerGroup = L.layerGroup().addTo(mymap);
@@ -29,6 +29,46 @@ L.control.select = function(opts) {
 }
 
 L.control.select({ position: 'topright' }).addTo(mymap);
+
+L.Control.data = L.Control.extend({
+    onAdd: function(map) {
+        var form = L.DomUtil.create('div');
+        form.id = "DataTable";
+        form.innerHTML = "<div class='swiper-container'><div class='swiper-wrapper'><div class='swiper-slide'><table class='table'><tr><th>Country</th></tr><tr><th>Capital City</th></tr><tr><th>Population</th></tr></table></div><div class='swiper-slide'><table class='table'><tr><th>Current Weather</th></table></div><div class='swiper-slide'><table class='table'><thead><th>Currency</th><th>GBP</th><th>USD</th><th>EUR</th></thead><tbody><th></th><th></th><th></th><th></th></tbody></table></div></div></div><div class='swiper-pagination'></div>";
+        return form;
+    },
+
+    onRemove: function(map) {
+        // Nothing to do here
+    }
+});
+
+L.control.data = function(opts) {
+    return new L.Control.data(opts);
+}
+
+L.control.data({ position: 'topleft' }).addTo(mymap);
+var mySwiper = new Swiper('.swiper-container', {
+    // Optional parameters
+    direction: 'horizontal',
+    loop: true,
+  
+    // If we need pagination
+    pagination: {
+      el: '.swiper-pagination',
+    },
+  
+    // Navigation arrows
+    navigation: {
+      nextEl: '.swiper-button-next',
+      prevEl: '.swiper-button-prev',
+    },
+  
+    // And if we need scrollbar
+    scrollbar: {
+      el: '.swiper-scrollbar',
+    },
+  })
 
 $(document).ready(function(){
     $.ajax({
@@ -89,7 +129,9 @@ function main(countryCode){
 
             if (result.status.name == "ok") {
                 console.log(result.data["coords"]);
-                var polygon = L.polygon(result.data["coords"], {color: 'red'}).addTo(mymap);
+
+                
+                var polygon = L.polygon(result.data["coords"],{color: 'red'}).addTo(mymap);
 
                 // zoom the map to the polyline
                 mymap.fitBounds(polygon.getBounds());

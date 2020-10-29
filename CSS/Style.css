@@ -13,7 +13,10 @@ input[Type="button"]{
 
 
 }
-
+.swiper-container {
+    width: 100%;
+    height: 100%;
+}
    
 
 select:hover{
@@ -49,6 +52,9 @@ div{
     width: 100%;
 }
 .leaflet-right{
+    width: 50%;
+}
+.leaflet-left{
     width: 50%;
 }
 .leaflet-control{
