@@ -18,7 +18,7 @@
 
 	$output['status']['code'] = "200";
 	$output['status']['name'] = "ok";
-	$output['status']['description'] = "Country returned";
+	$output['status']['description'] = "Wikis returned";
 	$output['status']['returnedIn'] = (microtime(true) - $executionStartTime) / 1000 . " ms";
 	$output['data'] = $decode["geonames"];
 	
