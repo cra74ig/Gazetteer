@@ -34,7 +34,7 @@ L.Control.data = L.Control.extend({
     onAdd: function(map) {
         var form = L.DomUtil.create('div');
         form.id = "DataTable";
-        form.innerHTML = "<div class='swiper-container'><div class='swiper-wrapper'><div class='swiper-slide'><table class='table table-dark'><tr><th>Country</th><td id='countryName'></td></tr><tr><th>Capital City</th><td id='capitalCity'></td></tr><tr><th>Population</th><td id='Population'></td></tr></table></div><div class='swiper-slide'><table class='table table-dark'><thead><th>Now</th></thead><tbody><tr><td id='currentWeather'></td></tr></tbody></table></div><div class='swiper-slide'><table class='table table-dark'><thead><th>Currency</th><th>GBP</th><th>USD</th><th>EUR</th></thead><tbody><tr><td id='currency'></td><td id='GBP'></td><td id='USD'></td><td id='EUR'></td></tr></tbody></table></div></div></div><div class='swiper-pagination'></div>";
+        form.innerHTML = "<div class='swiper-container'><div class='swiper-wrapper'><div class='swiper-slide'><table class='table table-dark'><tr><th>Country</th><td id='countryName'></td></tr><tr><th>Capital City</th><td id='capitalCity'></td></tr><tr><th>Population</th><td id='Population'></td></tr></table></div><div class='swiper-slide'><table class='table table-dark'><thead><th>Now</th></thead><tbody><tr><td id='currentWeather'></td></tr></tbody></table></div><div class='swiper-slide'><table class='table table-dark'><thead><th>Currency</th><th>GBP</th><th>USD</th><th>EUR</th></thead><tbody><tr><td id='currency'></td><td id='GBP'></td><td id='USD'></td><td id='EUR'></td></tr></tbody></table></div><div class='swiper-slide'><table class='table table-dark'><tr><th id='WikiTitle1'></th></tr><tr><th id='WikiTitle2'></th></tr><tr><th id='WikiTitle3></th></tr></table></div></div></div><div class='swiper-pagination'></div>";
         return form;
     },
 
@@ -51,17 +51,11 @@ L.control.data({ position: 'topleft' }).addTo(mymap);
 var mySwiper = new Swiper('.swiper-container', {
     // Optional parameters
     direction: 'horizontal',
-    loop: true,
+    loop: false,
   
     // If we need pagination
     pagination: {
       el: '.swiper-pagination',
-    },
-  
-    // Navigation arrows
-    navigation: {
-      nextEl: '.swiper-button-next',
-      prevEl: '.swiper-button-prev',
     },
   
     // And if we need scrollbar
@@ -128,24 +122,48 @@ function main(countryCode){
             
 
             if (result.status.name == "ok") {
-                console.log(result.data["coords"]);
-
+                $type = result.data['borders']["type"];
+                    if($type === "MultiPolygon"){
+                        console.log("test");
+                        result.data['borders']["coords"].forEach(coordA => {
+                            coordsArray = Array();
+                            coordA.forEach(coord=>{  
+                                coordArray = Array();
+                                coord.forEach(coordB=>{
+                                    coordB = coordB.reverse();
+                                    coordArray.push(coordB);
+                                });
+                                coordsArray.push(coordArray);
+                                
+                            }); 
+                        });
+                    }else{
+                        result.data['borders']["coords"].forEach(coordA => {
+                            coordsArray = Array();
+                                coordA.forEach(coordB=>{
+                                    coordB = coordB.reverse();
+                                    coordsArray.push(coordB);
+                                });
+                        });
+                    };
                 //Lang and lat are the wrong way round in JSON so need to be flipped 
-                var polygon = L.polygon(result.data["coords"],{color: 'red'}).addTo(mymap);
-
+                var polygon = L.polygon(coordsArray,{color: 'red'}).addTo(mymap);
+               
                 // zoom the map to the polyline
-                mymap.fitBounds(polygon.getBounds());
+                mymap.flyToBounds(polygon.getBounds(),{'duration': 2.5});
 
-                // $('#currentWeather').html("<img src='"+result.data["Weather"]["current"] + "'>");
-                console.log(result.data["currency"]["EUR"].toFixed(2));
+                $('#currentWeather').html("<img src='"+result.data["Weather"]["current"] + "'>");
                 $('#countryName').html(result.data["geonames"][0]["countryName"]);
                 $('#capitalCity').html(result.data["geonames"][0]["capital"]);
                 $('#Population').html(result.data["geonames"][0]["population"]);
                 $('#currency').html(result.data["currency"]["currentCurrency"]);
-                $('#GBP').html(result.data["currency"]["GBP"].toFixed(2));
-                $('#USD').html(result.data["currency"]["USD"].toFixed(2));
-                $('#EUR').html(result.data["currency"]["EUR"].toFixed(2));
-
+                $('#GBP').html(result.data["currency"]["GBP"]);
+                $('#USD').html(result.data["currency"]["USD"]);
+                $('#EUR').html(result.data["currency"]["EUR"]);
+                $('#WikiTitle1').html("<a href='https://"+result.data['WikiLinks'][0]['wikipediaUrl']+"'>"+result.data['WikiLinks'][0]['title']+"</a>");
+                $('#WikiTitle2').html("<a href='https://"+result.data['WikiLinks'][1]['wikipediaUrl']+"'>"+result.data['WikiLinks'][1]['title']+"</a>");
+                $('#WikiTitle3').html("<a href='https://"+result.data['WikiLinks'][2]['wikipediaUrl']+"'>"+result.data['WikiLinks'][2]['title']+"</a>");
+                
             }
         
         },
