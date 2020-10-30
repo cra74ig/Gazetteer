@@ -28,13 +28,13 @@ L.control.select = function(opts) {
     return new L.Control.select(opts);
 }
 
-L.control.select({ position: 'topright' }).addTo(mymap);
+L.control.select({ position: 'topleft' }).addTo(mymap);
 
 L.Control.data = L.Control.extend({
     onAdd: function(map) {
         var form = L.DomUtil.create('div');
         form.id = "DataTable";
-        form.innerHTML = "<div class='swiper-container'><div class='swiper-wrapper'><div class='swiper-slide'><table class='table'><tr><th>Country</th></tr><tr><th>Capital City</th></tr><tr><th>Population</th></tr></table></div><div class='swiper-slide'><table class='table'><tr><th>Current Weather</th></table></div><div class='swiper-slide'><table class='table'><thead><th>Currency</th><th>GBP</th><th>USD</th><th>EUR</th></thead><tbody><th></th><th></th><th></th><th></th></tbody></table></div></div></div><div class='swiper-pagination'></div>";
+        form.innerHTML = "<div class='swiper-container'><div class='swiper-wrapper'><div class='swiper-slide'><table class='table table-dark'><tr><th>Country</th><td id='countryName'></td></tr><tr><th>Capital City</th><td id='capitalCity'></td></tr><tr><th>Population</th><td id='Population'></td></tr></table></div><div class='swiper-slide'><table class='table table-dark'><thead><th>Now</th></thead><tbody><tr><td id='currentWeather'></td></tr></tbody></table></div><div class='swiper-slide'><table class='table table-dark'><thead><th>Currency</th><th>GBP</th><th>USD</th><th>EUR</th></thead><tbody><tr><td id='currency'></td><td id='GBP'></td><td id='USD'></td><td id='EUR'></td></tr></tbody></table></div></div></div><div class='swiper-pagination'></div>";
         return form;
     },
 
@@ -130,19 +130,21 @@ function main(countryCode){
             if (result.status.name == "ok") {
                 console.log(result.data["coords"]);
 
-                
+                //Lang and lat are the wrong way round in JSON so need to be flipped 
                 var polygon = L.polygon(result.data["coords"],{color: 'red'}).addTo(mymap);
 
                 // zoom the map to the polyline
                 mymap.fitBounds(polygon.getBounds());
-                // // Creating multi polygon options
-                // var multiPolygonOptions = {color:'red'};
 
-                // // Creating multi polygon
-                // var multipolygon = L.multiPolygon(result.data["coords"] , multiPolygonOptions);
-                // // Adding multi polygon to map
-                // multipolygon.addTo(map);
-                
+                // $('#currentWeather').html("<img src='"+result.data["Weather"]["current"] + "'>");
+                console.log(result.data["currency"]["EUR"].toFixed(2));
+                $('#countryName').html(result.data["geonames"][0]["countryName"]);
+                $('#capitalCity').html(result.data["geonames"][0]["capital"]);
+                $('#Population').html(result.data["geonames"][0]["population"]);
+                $('#currency').html(result.data["currency"]["currentCurrency"]);
+                $('#GBP').html(result.data["currency"]["GBP"].toFixed(2));
+                $('#USD').html(result.data["currency"]["USD"].toFixed(2));
+                $('#EUR').html(result.data["currency"]["EUR"].toFixed(2));
 
             }
         
