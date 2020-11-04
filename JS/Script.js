@@ -62,6 +62,10 @@ var mySwiper = new Swiper('.swiper-container', {
     scrollbar: {
       el: '.swiper-scrollbar',
     },
+    autoplay: {
+        delay: 5000,
+        disableOnInteraction: false,
+      }
   })
 
 $(document).ready(function(){
@@ -124,18 +128,20 @@ function main(countryCode){
             if (result.status.name == "ok") {
                 $type = result.data['borders']["type"];
                     if($type === "MultiPolygon"){
-                        console.log("test");
+                        
+                        coordsArray = Array();
                         result.data['borders']["coords"].forEach(coordA => {
-                            coordsArray = Array();
                             coordA.forEach(coord=>{  
+                                // console.log(coord);
                                 coordArray = Array();
                                 coord.forEach(coordB=>{
                                     coordB = coordB.reverse();
                                     coordArray.push(coordB);
                                 });
                                 coordsArray.push(coordArray);
-                                
+                                // console.log(coordsArray)
                             }); 
+                            
                         });
                     }else{
                         result.data['borders']["coords"].forEach(coordA => {
@@ -146,8 +152,9 @@ function main(countryCode){
                                 });
                         });
                     };
+                    
                 //Lang and lat are the wrong way round in JSON so need to be flipped 
-                var polygon = L.polygon(coordsArray,{color: 'red'}).addTo(mymap);
+                var polygon = L.polygon(coordsArray,{color: 'blue'}).addTo(mymap);
                
                 // zoom the map to the polyline
                 mymap.flyToBounds(polygon.getBounds(),{'duration': 2.5});
