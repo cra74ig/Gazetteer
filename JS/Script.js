@@ -8,7 +8,38 @@
     accessToken: 'pk.eyJ1IjoiY3JhNzRpZyIsImEiOiJja2c5azJrZGEwMHFoMnNzdzVjZmd5eDJ6In0.bZuD8zD7pmYGbg9tibxE4w',
     closePopupOnClick:false,
 }).addTo(mymap);
-
+var d = new Date();
+var n = d.getDay()
+switch (n){
+    case n=0:
+        var day3= "Tuesday";
+        var day4= "Wednesday";
+        break;
+    case n=1:
+        var day3= "Wednesday";
+        var day4= "Thursday";
+        break;
+    case n=2:
+        var day3= "Thursday";
+        var day4= "Friday";
+        break;
+    case n=3:
+        var day3= "Friday";
+        var day4= "Saturday";
+        break;
+    case n=4:
+        var day3= "Saturday";
+        var day4= "Sunday";
+        break;   
+    case n=5:
+        var day3= "Sunday";
+        var day4= "Monday";
+        break; 
+    case n=6:
+        var day3= "Monday";
+        var day4= "Tuesday";
+        break; 
+}
 var markerGroup = L.layerGroup().addTo(mymap);
 
 L.Control.select = L.Control.extend({
@@ -34,7 +65,7 @@ L.Control.data = L.Control.extend({
     onAdd: function(map) {
         var form = L.DomUtil.create('div');
         form.id = "DataTable";
-        form.innerHTML = "<div class='swiper-container'><div class='swiper-wrapper'><div class='swiper-slide'><table class='table table-dark'><tr><th>Country</th><td id='countryName'></td></tr><tr><th>Capital City</th><td id='capitalCity'></td></tr><tr><th>Population</th><td id='Population'></td></tr></table></div><div class='swiper-slide'><table class='table table-dark'><thead><th>Now</th></thead><tbody><tr><td id='currentWeather'></td></tr></tbody></table></div><div class='swiper-slide'><table class='table table-dark'><thead><th>Currency</th><th>GBP</th><th>USD</th><th>EUR</th></thead><tbody><tr><td id='currency'></td><td id='GBP'></td><td id='USD'></td><td id='EUR'></td></tr></tbody></table></div><div class='swiper-slide'><table class='table table-dark'><tr><th id='WikiTitle1'></th></tr><tr><th id='WikiTitle2'></th></tr><tr><th id='WikiTitle3></th></tr></table></div></div></div><div class='swiper-pagination'></div>";
+        form.innerHTML = "<div class='swiper-container'><div class='swiper-wrapper'><div class='swiper-slide' id='Picture'></div><div class='swiper-slide'><table class='table table-dark'><tr><th>Country</th><td id='countryName'></td></tr><tr><th>Capital City</th><td id='capitalCity'></td></tr><tr><th>Population</th><td id='Population'></td></tr></table></div><div class='swiper-slide'><table class='table table-dark'><thead><th>Current</th><th>Tomorrow</th><th>"+day3+"</th><th>"+day4+"</th></thead><tbody><tr><td id='currentWeather'></td><td id='weatherDay2'></td><td id='weatherDay3'></td><td id='weatherDay4'></td></tr></tbody></table></div><div class='swiper-slide'><table class='table table-dark'><thead><th>Currency</th><th>GBP</th><th>USD</th><th>EUR</th></thead><tbody><tr><td id='currency'></td><td id='GBP'></td><td id='USD'></td><td id='EUR'></td></tr></tbody></table></div><div class='swiper-slide'><table class='table table-dark'><tr><th id='WikiTitle1'></th></tr><tr><th id='WikiTitle2'></th></tr></table></div></div></div><div class='swiper-pagination'></div>";
         return form;
     },
 
@@ -67,6 +98,14 @@ var mySwiper = new Swiper('.swiper-container', {
         disableOnInteraction: false,
       }
   })
+
+var CurrentIcon = L.icon({
+    iconUrl: "Images/location-pointer.svg",
+    
+
+    iconSize:     [38, 95], // size of the icon
+    iconAnchor:   [22, 94], // point of the icon which will correspond to marker's location
+});
 
 $(document).ready(function(){
     $.ajax({
@@ -130,6 +169,12 @@ function main(countryCode){
                     if($type === "MultiPolygon"){
                         
                         coordsArray = Array();
+                        // Test = L.GeoJSON(result.data['borders']["coords"][0],{coordsToLatLang(coords){
+                        //     coords.foreach(coord=>{
+                        //         return new L.LatLng(coord);
+                        //     })
+                        // }})
+                        
                         result.data['borders']["coords"].forEach(coordA => {
                             coordA.forEach(coord=>{  
                                 // console.log(coord);
@@ -157,9 +202,13 @@ function main(countryCode){
                 var polygon = L.polygon(coordsArray,{color: 'blue'}).addTo(mymap);
                
                 // zoom the map to the polyline
-                mymap.flyToBounds(polygon.getBounds(),{'duration': 2.5});
-
+                mymap.fitBounds(polygon.getBounds(),{'duration': 2.5});
+                $('#Picture').html("<img src='"+result.data["picture"] + "'>");
                 $('#currentWeather').html("<img src='"+result.data["Weather"]["current"] + "'>");
+                $('#weatherDay2').html("<img src='"+result.data["Weather"]["day2"] + "'>");
+                $('#weatherDay3').html("<img src='"+result.data["Weather"]["day3"] + "'>");
+                $('#weatherDay4').html("<img src='"+result.data["Weather"]["day4"] + "'>");
+                // $('#weatherDay5').html("<img src='"+result.data["Weather"]["day2"] + "'>");
                 $('#countryName').html(result.data["geonames"][0]["countryName"]);
                 $('#capitalCity').html(result.data["geonames"][0]["capital"]);
                 $('#Population').html(result.data["geonames"][0]["population"]);
@@ -187,7 +236,8 @@ function GetCountryCode(position) {
     var Corods = new L.LatLng(y+0.005,x)
     mymap.setView(Corods, 15, {animation: true});
     var marker = L.marker(markerCorods, {
-        title: "Current Location"
+        title: "Current Location",
+        icon: CurrentIcon
       }).addTo(markerGroup);
     $.ajax({
         url: "PHP/GetCountry.PHP",
@@ -215,88 +265,4 @@ function GetCountryCode(position) {
         }
     });
     
-}
-//Reaches to other API/PHP files and shows data on page.
-async function GetDetails(CountryCode, IsCurrentLocation){
-    $.ajax({
-        url: "PHP/GetCountryInfo.PHP",
-        type: 'POST',
-        dataType: 'json',
-        data: {
-            country: CountryCode,
-        },
-        success: function(result) {
-            
-
-            if (result.status.name == "ok") {               
-                if(IsCurrentLocation){
-                    if($("#WikiLinks").attr("State")==="Active"){
-                        GetWikiLinks(CountryCode,result["data"][0]["capital"],true)
-                    }else{
-                        $("#CurrentLocationCapital").html("<p>("+CountryCode+") Capital City: " + (result["data"][0]["capital"])+"</p>");
-                        $("#CurrentLocationPopulation").html("<p>Population: " + (result["data"][0]["population"])+ "</p>");
-                        GetExchangeRate(result["data"][0]["currencyCode"],"CurrentLocation");
-                        $("#CurrentLocationWeather").html(GetWeather(result["data"][0]["capital"],"CurrentLocation"));
-                    }
-                }else{
-                    if($("#WikiLinks").attr("State")==="Active"){
-                        GetWikiLinks(CountryCode,result["data"][0]["capital"],false)
-                    }else{
-                        popContent = "<p>Population: " + (result["data"][0]["population"]);
-                        capitalContent  = "<p>("+CountryCode+") Capital City: " + (result["data"][0]["capital"]);
-                        GetExchangeRate(result["data"][0]["currencyCode"],CountryCode);
-                        GetWeather(result["data"][0]["capital"],CountryCode);
-
-                    }
-                }
-            } 
-        },
-        error: function(jqXHR, textStatus, errorThrown) {
-            console.log(errorThrown);
-        }
-    });
-}
-
-function GetExchangeRate(Currency,Location){
-    $.ajax({
-        url: "PHP/GetExchangeRate.PHP",
-        type: 'POST',
-        dataType: 'json',
-        data: {
-            currency: Currency,
-        },
-        success: function(result) {
-            
-
-            if (result.status.name == "ok") {
-                content = ("<table><thead><tr><th>Currency</th><th>GBP</th><th>USD</th><th>EUR</th></tr></thead><tbody><tr><td>"+Currency+"</td><td>"+(result["data"]["GBP"]).toFixed(2)+"</td><td>"+(result["data"]["USD"]).toFixed(2)+"</td><td>"+(result["data"]["EUR"]).toFixed(2)+"</td></tr></tbody></table>");
-            }
-        },
-        error: function(jqXHR, textStatus, errorThrown) {
-            console.log(errorThrown);
-        }
-        
-    });
-}
-function GetWeather(Capital,Location){
-    
-    $.ajax({
-        url: "PHP/GetWeather.PHP",
-        type: 'POST',
-        dataType: 'json',
-        data: {
-            capital: Capital,
-        },
-        success: function(result) {
-            
-
-            if (result.status.name == "ok") {
-                var Wimage = result["data"];
-                content = "<p>Current Weather</p><img src='"+ Wimage +"' />";
-            }
-        },
-        error: function(jqXHR, textStatus, errorThrown) {
-            console.log(errorThrown);
-        }
-    });
 }
