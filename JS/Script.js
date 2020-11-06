@@ -13,31 +13,24 @@ var n = d.getDay()
 switch (n){
     case n=0:
         var day3= "Tuesday";
-        var day4= "Wednesday";
         break;
     case n=1:
         var day3= "Wednesday";
-        var day4= "Thursday";
         break;
     case n=2:
         var day3= "Thursday";
-        var day4= "Friday";
         break;
     case n=3:
         var day3= "Friday";
-        var day4= "Saturday";
         break;
     case n=4:
         var day3= "Saturday";
-        var day4= "Sunday";
         break;   
     case n=5:
         var day3= "Sunday";
-        var day4= "Monday";
         break; 
     case n=6:
         var day3= "Monday";
-        var day4= "Tuesday";
         break; 
 }
 var markerGroup = L.layerGroup().addTo(mymap);
@@ -65,7 +58,7 @@ L.Control.data = L.Control.extend({
     onAdd: function(map) {
         var form = L.DomUtil.create('div');
         form.id = "DataTable";
-        form.innerHTML = "<div class='swiper-container'><div class='swiper-wrapper'><div class='swiper-slide' id='Picture'></div><div class='swiper-slide'><table class='table table-dark'><tr><th>Country</th><td id='countryName'></td></tr><tr><th>Capital City</th><td id='capitalCity'></td></tr><tr><th>Population</th><td id='Population'></td></tr></table></div><div class='swiper-slide'><table class='table table-dark'><thead><th>Current</th><th>Tomorrow</th><th>"+day3+"</th><th>"+day4+"</th></thead><tbody><tr><td id='currentWeather'></td><td id='weatherDay2'></td><td id='weatherDay3'></td><td id='weatherDay4'></td></tr></tbody></table></div><div class='swiper-slide'><table class='table table-dark'><thead><th>Currency</th><th>GBP</th><th>USD</th><th>EUR</th></thead><tbody><tr><td id='currency'></td><td id='GBP'></td><td id='USD'></td><td id='EUR'></td></tr></tbody></table></div><div class='swiper-slide'><table class='table table-dark'><tr><th id='WikiTitle1'></th></tr><tr><th id='WikiTitle2'></th></tr></table></div></div></div><div class='swiper-pagination'></div>";
+        form.innerHTML = "<div class='swiper-container'><div class='swiper-wrapper'><div class='swiper-slide' id='Picture'></div><div class='swiper-slide card'><table class='table table-light table-bordered'><tr><th>Country</th><td id='countryName'></td></tr><tr><th>Capital City</th><td id='capitalCity'></td></tr><tr><th>Population</th><td id='Population'></td></tr></table></div><div class='swiper-slide card'><table class='table table-light table-bordered'><thead><th>Current</th><th>Tomorrow</th><th>"+day3+"</th></thead><tbody><tr><td id='currentWeather'></td><td id='weatherDay2'></td><td id='weatherDay3'></td></tr></tbody></table></div><div class='swiper-slide card'><table class='table table-light table-bordered'><thead><th>Currency</th><th>GBP</th><th>USD</th><th>EUR</th></thead><tbody><tr><td id='currency'></td><td id='GBP'></td><td id='USD'></td><td id='EUR'></td></tr></tbody></table></div><div class='swiper-slide card'><table class='table table-light'><thead><tr><th>Wikipedia Tourist Links</tr><tr><th id='WikiTitle1'></th></tr><tr><th id='WikiTitle2'></th></tr></table></div></div></div><div class='swiper-pagination'></div>";
         return form;
     },
 
@@ -203,12 +196,10 @@ function main(countryCode){
                
                 // zoom the map to the polyline
                 mymap.fitBounds(polygon.getBounds(),{'duration': 2.5});
-                $('#Picture').html("<img src='"+result.data["picture"] + "'>");
-                $('#currentWeather').html("<img src='"+result.data["Weather"]["current"] + "'>");
-                $('#weatherDay2').html("<img src='"+result.data["Weather"]["day2"] + "'>");
-                $('#weatherDay3').html("<img src='"+result.data["Weather"]["day3"] + "'>");
-                $('#weatherDay4').html("<img src='"+result.data["Weather"]["day4"] + "'>");
-                // $('#weatherDay5').html("<img src='"+result.data["Weather"]["day2"] + "'>");
+                $('#Picture').html("<img class='picture' src='"+result.data["picture"] + "'>");
+                $('#currentWeather').html("<img class='weather' src='"+result.data["Weather"]["current"] + "'>");
+                $('#weatherDay2').html("<img class='weather' src='"+result.data["Weather"]["day2"] + "'>");
+                $('#weatherDay3').html("<img class='weather' src='"+result.data["Weather"]["day3"] + "'>");
                 $('#countryName').html(result.data["geonames"][0]["countryName"]);
                 $('#capitalCity').html(result.data["geonames"][0]["capital"]);
                 $('#Population').html(result.data["geonames"][0]["population"]);
