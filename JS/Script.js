@@ -58,7 +58,7 @@ L.Control.data = L.Control.extend({
     onAdd: function(map) {
         var form = L.DomUtil.create('div');
         form.id = "DataTable";
-        form.innerHTML = "<div class='swiper-container'><div class='swiper-wrapper'><div class='swiper-slide' id='Picture'></div><div class='swiper-slide card'><table class='table table-light table-bordered'><tr><th>Country</th><td id='countryName'></td></tr><tr><th>Capital City</th><td id='capitalCity'></td></tr><tr><th>Population</th><td id='Population'></td></tr></table></div><div class='swiper-slide card'><table class='table table-light table-bordered'><thead><th>Current</th><th>Tomorrow</th><th>"+day3+"</th></thead><tbody><tr><td id='currentWeather'></td><td id='weatherDay2'></td><td id='weatherDay3'></td></tr></tbody></table></div><div class='swiper-slide card'><table class='table table-light table-bordered'><thead><th>Currency</th><th>GBP</th><th>USD</th><th>EUR</th></thead><tbody><tr><td id='currency'></td><td id='GBP'></td><td id='USD'></td><td id='EUR'></td></tr></tbody></table></div><div class='swiper-slide card'><table class='table table-light'><thead><tr><th>Wikipedia Tourist Links</tr><tr><th id='WikiTitle1'></th></tr><tr><th id='WikiTitle2'></th></tr></table></div></div></div><div class='swiper-pagination'></div>";
+        form.innerHTML = "<div class='swiper-container'><div class='swiper-wrapper'><div class='swiper-slide' id='largePicture'></div><div class='swiper-slide card'><table class='table table-light table-bordered'><tr><th>Country</th><td id='countryName'></td></tr><tr><th>Capital City</th><td id='capitalCity'></td></tr><tr><th>Population</th><td id='Population'></td></tr></table></div><div class='swiper-slide card'><table class='table table-light table-bordered'><thead><th>Current</th><th>Tomorrow</th><th>"+day3+"</th></thead><tbody><tr><td id='currentWeather'></td><td id='weatherDay2'></td><td id='weatherDay3'></td></tr></tbody></table></div><div class='swiper-slide card'><table class='table table-light table-bordered'><thead><th>Currency</th><th>GBP</th><th>USD</th><th>EUR</th></thead><tbody><tr><td id='currency'></td><td id='GBP'></td><td id='USD'></td><td id='EUR'></td></tr></tbody></table></div><div class='swiper-slide card'><table class='table table-light'><thead><tr><th>Wikipedia Tourist Links</tr><tr><th id='WikiTitle1'></th></tr><tr><th id='WikiTitle2'></th></tr></table></div></div></div><div class='swiper-pagination'></div>";
         return form;
     },
 
@@ -162,8 +162,9 @@ function main(countryCode){
                     if($type === "MultiPolygon"){
                         
                         coordsArray = Array();
-                        // Test = L.GeoJSON(result.data['borders']["coords"][0],{coordsToLatLang(coords){
+                        //  coordArray = L.GeoJSON(result.data['borders']["coords"][0],{coordsToLatLang(coords){
                         //     coords.foreach(coord=>{
+                            //return into array?
                         //         return new L.LatLng(coord);
                         //     })
                         // }})
@@ -196,7 +197,7 @@ function main(countryCode){
                
                 // zoom the map to the polyline
                 mymap.fitBounds(polygon.getBounds(),{'duration': 2.5});
-                $('#Picture').html("<img class='picture' src='"+result.data["picture"] + "'>");
+                $('#largePicture').html("<img class='webPicture' src='"+result.data["webPicture"] + "'>");
                 $('#currentWeather').html("<img class='weather' src='"+result.data["Weather"]["current"] + "'>");
                 $('#weatherDay2').html("<img class='weather' src='"+result.data["Weather"]["day2"] + "'>");
                 $('#weatherDay3').html("<img class='weather' src='"+result.data["Weather"]["day3"] + "'>");
@@ -223,8 +224,8 @@ function main(countryCode){
 function GetCountryCode(position) {
     var x = position.coords.longitude;
     var y = position.coords.latitude;
-    var markerCorods = new L.LatLng(y,x)
-    var Corods = new L.LatLng(y+0.005,x)
+    var markerCorods = new L.LatLng(y,x);
+    var Corods = new L.LatLng(y+0.005,x);
     mymap.setView(Corods, 15, {animation: true});
     var marker = L.marker(markerCorods, {
         title: "Current Location",
