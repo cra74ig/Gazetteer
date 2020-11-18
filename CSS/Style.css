@@ -9,10 +9,27 @@
 input[Type="button"]{
     cursor: pointer;
 }
-@media only screen and (min-width: 700px){
-
-
+@media (min-width: 480px){
+    .leaflet-left{
+        width: 50%;
+    }
 }
+@media only screen and (max-width: 479px){
+    .leaflet-left{
+        width: 80%;
+    }
+}
+@media only screen and (max-width:529px) and (min-width: 479px){
+    .weather{
+        max-width: 40px;
+    }
+}
+@media only screen and (max-width:330px){
+    .weather{
+        max-width: 40px;
+    }
+}
+
 .swiper-container {
     width: 100%;
     height: 100%;
@@ -51,15 +68,14 @@ div{
     top: 0;
     width: 100%;
 }
-.leaflet-right{
-    width: 50%;
-}
-.leaflet-left{
-    width: 50%;
-}
+
+
 .leaflet-control{
     width: 100%;
 }
 .input-group{
     width: 100%;
+}
+.webPicture{
+    width:100%
 }

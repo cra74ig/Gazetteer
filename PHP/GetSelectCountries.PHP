@@ -1,7 +1,7 @@
 <?PHP
     
 	$executionStartTime = microtime(true) / 1000;
-    $result = file_get_contents("..\assests\countryBorders.geo.json");
+    $result = file_get_contents("../assests/countryBorders.geo.json");
     
     $decode = json_decode($result,true);
     $features = $decode["features"];
@@ -24,6 +24,7 @@
     $output['status']['description'] = "Countries returned";
     $output['status']['returnedIn'] = (microtime(true) - $executionStartTime) / 1000 . " ms";
     $output["len"] = $x;
+    header('Content-Type: application/json; charset=UTF-8');
     echo json_encode($output);
     //needs ISO_a2 and country
 ?>
