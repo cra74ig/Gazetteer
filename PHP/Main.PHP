@@ -3,7 +3,7 @@
 
         $executionStartTime = microtime(true) / 1000;
     
-        $url='https://gazetter.craigbutton.co.uk/PHP/GetBorders.PHP?countryCode='. $_REQUEST['countryCode'];
+        $url='https://gazetteer.craigbutton.co.uk/PHP/GetBorders.PHP?countryCode='. $_REQUEST['countryCode'];
     
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
@@ -118,6 +118,7 @@
 	$decode = json_decode($result,true);
         
         $output['data']['news'] = $decode["articles"][0];
+        // $url = 'http://geodb-free-service.wirefreethought.com/v1/geo/cities?';
         
         $url='http://api.geonames.org/wikipediaSearchJSON?q=' . $capital."&countryCode=". $_REQUEST['countryCode']. '&maxRows=3&username=cra74ig';
 
