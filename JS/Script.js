@@ -22,6 +22,8 @@ var baseMaps = {
     "Streets": streets
 };
 L.control.layers(baseMaps).addTo(mymap);
+
+// L.easyButton("fa-compass",CurrentPosition()).addTo(mymap);
 var d = new Date();
 var n = d.getDay()
 switch (n){
@@ -53,7 +55,7 @@ L.Control.select = L.Control.extend({
     onAdd: function(map) {
         var form = L.DomUtil.create('div');
         form.id = "CountryFormDiv";
-        form.innerHTML = "<div class='input-group'><select class='custom-select' id='CountryChoice'></select><img src='Images/location-pointer.svg' class='input-group-append img-fluid p-0 m-0' alt='Current Location' id='CurrentLocation'></div>";
+        form.innerHTML = "<div class='input-group'><select class='custom-select' id='CountryChoice'></select></div>";
         return form;
     },
 
@@ -67,6 +69,8 @@ L.control.select = function(opts) {
 }
 
 L.control.select({ position: 'topleft' }).addTo(mymap);
+
+L.easyButton('fa-compass', function(){CurrentPosition()}).addTo(mymap);
 
 L.Control.data = L.Control.extend({
     onAdd: function(map) {
@@ -169,20 +173,14 @@ function main(countryCode){
             countryCode: countryCode
         },
         success: function(result) {
-            
+            console.log(result);
 
             if (result.status.name == "ok") {
                 $type = result.data['borders']["type"];
                     if($type === "MultiPolygon"){
                         
                         coordsArray = Array();
-                        //  coordArray = L.GeoJSON(result.data['borders']["coords"][0],{coordsToLatLang(coords){
-                        //     coords.foreach(coord=>{
-                            //return into array?
-                        //         return new L.LatLng(coord);
-                        //     })
-                        // }})
-                        
+
                         result.data['borders']["coords"].forEach(coordA => {
                             coordA.forEach(coord=>{  
                                 // console.log(coord);
@@ -206,7 +204,7 @@ function main(countryCode){
                         });
                     };
                     
-                //Lang and lat are the wrong way round in JSON so need to be flipped 
+                
                 var polygon = L.polygon(coordsArray,{color: 'blue'}).addTo(mymap);
                
                 // zoom the map to the polyline

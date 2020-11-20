@@ -51,24 +51,9 @@ html, body, #map {
     height: 100%;
     width: 100%;
 }
-#GeoInfo{
-    background-color: chartreuse;
-}
-#WikiLinks{
-    background-color: slategray;
-    color: snow;
-}
 div{
     word-wrap: break-word;
 }
-#navBar{
-    z-index: 8000;
-    background-color: slategray;
-    position: fixed;
-    top: 0;
-    width: 100%;
-}
-
 
 .leaflet-control{
     width: 100%;

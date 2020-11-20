@@ -35,6 +35,7 @@
 
         $capital = $decode["geonames"][0]["capital"];
         $currency = $decode["geonames"][0]["currencyCode"];
+        $countryName = $decode["geonames"][0]["countryName"];
         //fixes issue where spaces in capital city names would retreive null value by using url encoding
         $capital = str_replace(" ","%20",$capital);
 
@@ -69,9 +70,27 @@
 
 	curl_close($ch);
 
-        $decode = json_decode($result,true);	
-        $output["data"]["picture"] = $decode["hits"][0]["previewURL"];
-        $output["data"]["webPicture"] = $decode["hits"][0]["webformatURL"];
+        $decode = json_decode($result,true);
+        if(isset($decode["hits"][0])){
+                $output["data"]["picture"] = $decode["hits"][0]["previewURL"];
+                $output["data"]["webPicture"] = $decode["hits"][0]["webformatURL"];
+        }else{
+                $url='https://pixabay.com/api/?key=18982067-e440b26cdd9f91df62d92ee06&q='.$countryName.'+city&image_type=photo&pretty=true';
+
+                $ch = curl_init();
+                curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+                curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+                curl_setopt($ch, CURLOPT_URL,$url);
+        
+                $result=curl_exec($ch);
+        
+                curl_close($ch);
+        
+                $decode = json_decode($result,true);
+                $output["data"]["picture"] = $decode["hits"][0]["previewURL"];
+                $output["data"]["webPicture"] = $decode["hits"][0]["webformatURL"];
+        }
+       
 
 
         $url='https://api.exchangeratesapi.io/latest?base='.$currency;
