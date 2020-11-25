@@ -70,13 +70,13 @@ L.control.select = function(opts) {
 
 L.control.select({ position: 'topleft' }).addTo(mymap);
 
-L.easyButton('fa-compass', function(){CurrentPosition()}).addTo(mymap);
+L.easyButton('fa-compass', function(){CurrentPosition()},{position: 'topright'}).addTo(mymap);
 
 L.Control.data = L.Control.extend({
     onAdd: function(map) {
         var form = L.DomUtil.create('div');
         form.id = "DataTable";
-        form.innerHTML = "<div class='swiper-container'><div class='swiper-wrapper'><div class='swiper-slide' id='largePicture'></div><div class='swiper-slide card'><table class='table table-light table-bordered'><tr><th>Country</th><td id='countryName'></td></tr><tr><th>Capital City</th><td id='capitalCity'></td></tr><tr><th>Population</th><td id='Population'></td></tr></table></div><div class='swiper-slide card'><table class='table table-light table-bordered'><thead><th>Current</th><th>Tomorrow</th><th>"+day3+"</th></thead><tbody><tr><td id='currentWeather'></td><td id='weatherDay2'></td><td id='weatherDay3'></td></tr></tbody></table></div><div class='swiper-slide card'><table class='table table-light table-bordered'><thead><th>Currency</th><th>GBP</th><th>USD</th><th>EUR</th></thead><tbody><tr><td id='currency'></td><td id='GBP'></td><td id='USD'></td><td id='EUR'></td></tr></tbody></table></div><div class='swiper-slide card'><table class='table table-light'><thead><tr><th>Wikipedia Tourist Links</tr><tr><th id='WikiTitle1'></th></tr><tr><th id='WikiTitle2'></th></tr></table></div><div class='swiper-slide card' id='News'></div></div></div><div class='swiper-pagination'></div>";
+        form.innerHTML = "<div class='container'><ul class='nav nav-pills'><li class='active'><a href='#Overview' data-toggle='tab'>Overview</a></li><li><a href='#picture' data-toggle='tab'>Picture</a></li><li><a href='#weather' data-toggle='tab'>Weather</a></li><li><a href='#currency-tab' data-toggle='tab'>Currency</a></li></ul><div class='tab-content clearfix'> <div class='tab-pane active' id='Overview'><table class='table table-light table-bordered'><tr><th>Country</th><td id='countryName'></td></tr><tr><th>Capital City</th><td id='capitalCity'></td></tr><tr><th>Population</th><td id='Population'></td></tr></table> </div> <div class='tab-pane' id='picture'> </div> <div class='tab-pane' id='weather'><table class='table table-light table-bordered'><thead><th>Current</th><th>Tomorrow</th><th>"+day3+"</th></thead><tbody><tr><td id='currentWeather'></td><td id='weatherDay2'></td><td id='weatherDay3'></td></tr></tbody></table></div> <div class='tab-pane' id='currency-tab'><table class='table table-light table-bordered'><thead><th>Currency</th><th>GBP</th><th>USD</th><th>EUR</th></thead><tbody><tr><td id='currency'></td><td id='GBP'></td><td id='USD'></td><td id='EUR'></td></tr></tbody></table></div></div></div>";
         return form;
     },
 
@@ -210,7 +210,7 @@ function main(countryCode){
                 // zoom the map to the polyline
                 mymap.fitBounds(polygon.getBounds(),{'duration': 2.5});
                 $("#News").html("<h2>Global News</h2><h3>"+result.data["news"]["title"]+"</h3>"+result.data["news"]["description"]+"<a href="+result.data["news"]["url"]+">Read more</a>")
-                $('#largePicture').html("<img class='webPicture' src='"+result.data["webPicture"] + "'>");
+                $('#picture').html("<img class='webPicture' src='"+result.data["webPicture"] + "'>");
                 $('#currentWeather').html("<img class='weather' src='"+result.data["Weather"]["current"] + "'>");
                 $('#weatherDay2').html("<img class='weather' src='"+result.data["Weather"]["day2"] + "'>");
                 $('#weatherDay3').html("<img class='weather' src='"+result.data["Weather"]["day3"] + "'>");
@@ -270,4 +270,7 @@ function GetCountryCode(position) {
         }
     });
     
+}
+function showCurrency(){
+    console.log("test");
 }
