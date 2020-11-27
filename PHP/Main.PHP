@@ -51,11 +51,11 @@
 	curl_close($ch);
 
         $decode = json_decode($result,true);	
-        $output["data"]["Weather"]["current"] = $decode["current"]["condition"]["icon"];
-        $output["data"]["Weather"]["day2"] = $decode["forecast"]["forecastday"][0]["day"]["condition"]["icon"];
-        $output["data"]["Weather"]["day3"] = $decode["forecast"]["forecastday"][1]["day"]["condition"]["icon"];
-        $output["data"]["Weather"]["day4"] = $decode["forecast"]["forecastday"][2]["day"]["condition"]["icon"];
-        // $output["data"]["Weather"]["day5"] = $decode["forecast"]["forecastday"][3]["day"]["condition"]["icon"];
+        $output["data"]["Weather"]["current"] = $decode["current"];
+        $output["data"]["Weather"]["day2"] = $decode["forecast"]["forecastday"][0]["day"];
+        $output["data"]["Weather"]["day3"] = $decode["forecast"]["forecastday"][1]["day"];
+        $output["data"]["Weather"]["day4"] = $decode["forecast"]["forecastday"][2]["day"];
+        
         
         // $output["data"]["Weather"]["forecast"] = $decode["forecast"];
 
@@ -137,7 +137,19 @@
 	$decode = json_decode($result,true);
         
         $output['data']['news'] = $decode["articles"][0];
-        // $url = 'http://geodb-free-service.wirefreethought.com/v1/geo/cities?';
+
+        $url = 'http://geodb-free-service.wirefreethought.com/v1/geo/cities?offset=0&limit=5&countryIds='.$_REQUEST['countryCode'];
+        $ch = curl_init();
+	curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+	curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+	curl_setopt($ch, CURLOPT_URL,$url);
+
+	$result=curl_exec($ch);
+
+	curl_close($ch);
+
+        $decode = json_decode($result,true);
+        $output['data']['cities'] = $decode['data'];
         
         $url='http://api.geonames.org/wikipediaSearchJSON?q=' . $capital."&countryCode=". $_REQUEST['countryCode']. '&maxRows=3&username=cra74ig';
 

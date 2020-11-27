@@ -65,6 +65,6 @@ div{
     width:100%
 }
 .nav-pills > li > a {
-    border-radius: 0;
+    border-radius: 5;
     background-color: white;
   }

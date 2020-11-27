@@ -76,7 +76,7 @@ L.Control.data = L.Control.extend({
     onAdd: function(map) {
         var form = L.DomUtil.create('div');
         form.id = "DataTable";
-        form.innerHTML = "<div class='container'><ul class='nav nav-pills'><li class='active'><a href='#Overview' data-toggle='tab'>Overview</a></li><li><a href='#picture' data-toggle='tab'>Picture</a></li><li><a href='#weather' data-toggle='tab'>Weather</a></li><li><a href='#currency-tab' data-toggle='tab'>Currency</a></li></ul><div class='tab-content clearfix'> <div class='tab-pane active' id='Overview'><table class='table table-light table-bordered'><tr><th>Country</th><td id='countryName'></td></tr><tr><th>Capital City</th><td id='capitalCity'></td></tr><tr><th>Population</th><td id='Population'></td></tr></table> </div> <div class='tab-pane' id='picture'> </div> <div class='tab-pane' id='weather'><table class='table table-light table-bordered'><thead><th>Current</th><th>Tomorrow</th><th>"+day3+"</th></thead><tbody><tr><td id='currentWeather'></td><td id='weatherDay2'></td><td id='weatherDay3'></td></tr></tbody></table></div> <div class='tab-pane' id='currency-tab'><table class='table table-light table-bordered'><thead><th>Currency</th><th>GBP</th><th>USD</th><th>EUR</th></thead><tbody><tr><td id='currency'></td><td id='GBP'></td><td id='USD'></td><td id='EUR'></td></tr></tbody></table></div></div></div>";
+        form.innerHTML = "<div class='container'><ul class='nav nav-pills'><li class='active'><a href='#Overview' data-toggle='tab'>Overview</a></li><li><a href='#picture' data-toggle='tab'>Picture</a></li><li><a href='#weather' data-toggle='tab'>Weather</a></li><li><a href='#currency-tab' data-toggle='tab'>Currency</a></li></ul><div class='tab-content clearfix'> <div class='tab-pane active' id='Overview'><table class='table table-light table-bordered'><tr><th>Country</th><td id='countryName'></td></tr><tr><th>Capital City</th><td id='capitalCity'></td></tr><tr><th>Population</th><td id='Population'></td></tr><tr><th>Wikipedia Tourist Links</th><td id='WikiLinks'></td></tr></table> </div> <div class='tab-pane' id='picture'> </div> <div class='tab-pane' id='weather'><table class='table table-light table-bordered'><thead><th>Current</th><th>Tomorrow</th><th>"+day3+"</th></thead><tbody><tr><td id='currentWeather'></td><td id='weatherDay2'></td><td id='weatherDay3'></td></tr></tbody></table></div> <div class='tab-pane' id='currency-tab'><table class='table table-light table-bordered'><thead><th>Currency</th><th>GBP</th><th>USD</th><th>EUR</th></thead><tbody><tr><td id='currency'></td><td id='GBP'></td><td id='USD'></td><td id='EUR'></td></tr></tbody></table></div></div></div>";
         return form;
     },
 
@@ -208,12 +208,12 @@ function main(countryCode){
                 var polygon = L.polygon(coordsArray,{color: 'blue'}).addTo(mymap);
                
                 // zoom the map to the polyline
-                mymap.fitBounds(polygon.getBounds(),{'duration': 2.5});
+                mymap.fitBounds(polygon.getBounds());
                 $("#News").html("<h2>Global News</h2><h3>"+result.data["news"]["title"]+"</h3>"+result.data["news"]["description"]+"<a href="+result.data["news"]["url"]+">Read more</a>")
                 $('#picture').html("<img class='webPicture' src='"+result.data["webPicture"] + "'>");
-                $('#currentWeather').html("<img class='weather' src='"+result.data["Weather"]["current"] + "'>");
-                $('#weatherDay2').html("<img class='weather' src='"+result.data["Weather"]["day2"] + "'>");
-                $('#weatherDay3').html("<img class='weather' src='"+result.data["Weather"]["day3"] + "'>");
+                $('#currentWeather').html("<img class='weather' src='"+result.data["Weather"]["current"]["condition"]["icon"] + "'><h3>"+result.data["Weather"]["current"]["temp_c"]+"<h3>");
+                $('#weatherDay2').html("<img class='weather' src='"+result.data["Weather"]["day2"]["condition"]["icon"] + "'><h3>"+result.data["Weather"]["day2"]["maxtemp_c"]+"<h3></p>"+result.data["Weather"]["day2"]["mintemp_c"]+"</p>");
+                $('#weatherDay3').html("<img class='weather' src='"+result.data["Weather"]["day3"]["condition"]["icon"] + "'><h3>"+result.data["Weather"]["day3"]["maxtemp_c"]+"<h3></p>"+result.data["Weather"]["day3"]["mintemp_c"]+"</p>");
                 $('#countryName').html(result.data["geonames"][0]["countryName"]);
                 $('#capitalCity').html(result.data["geonames"][0]["capital"]);
                 $('#Population').html(result.data["geonames"][0]["population"]);
@@ -221,10 +221,9 @@ function main(countryCode){
                 $('#GBP').html(result.data["currency"]["GBP"]);
                 $('#USD').html(result.data["currency"]["USD"]);
                 $('#EUR').html(result.data["currency"]["EUR"]);
-                $('#WikiTitle1').html("<a href='https://"+result.data['WikiLinks'][0]['wikipediaUrl']+"'>"+result.data['WikiLinks'][0]['title']+"</a>");
-                $('#WikiTitle2').html("<a href='https://"+result.data['WikiLinks'][1]['wikipediaUrl']+"'>"+result.data['WikiLinks'][1]['title']+"</a>");
-                $('#WikiTitle3').html("<a href='https://"+result.data['WikiLinks'][2]['wikipediaUrl']+"'>"+result.data['WikiLinks'][2]['title']+"</a>");
-                
+                $('#WikiLinks').html("<a href='https://"+result.data['WikiLinks'][0]['wikipediaUrl']+"'>"+result.data['WikiLinks'][0]['title']+"</a></br><a href='https://"+result.data['WikiLinks'][1]['wikipediaUrl']+"'>"+result.data['WikiLinks'][1]['title']+"</a></br><a href='https://"+result.data['WikiLinks'][2]['wikipediaUrl']+"'>"+result.data['WikiLinks'][2]['title']+"</a>");
+                console.log(result.data["cities"][0]["latitude"]);
+                console.log(result.data["cities"][0]["longitude"]);
             }
         
         },
