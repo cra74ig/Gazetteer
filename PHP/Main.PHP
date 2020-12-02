@@ -87,8 +87,10 @@
                 curl_close($ch);
         
                 $decode = json_decode($result,true);
-                $output["data"]["picture"] = $decode["hits"][0]["previewURL"];
-                $output["data"]["webPicture"] = $decode["hits"][0]["webformatURL"];
+                if(isset($decode["hits"][0])){
+                        $output["data"]["picture"] = $decode["hits"][0]["previewURL"];
+                        $output["data"]["webPicture"] = $decode["hits"][0]["webformatURL"];
+                }
         }
        
 
@@ -138,7 +140,7 @@
         
         $output['data']['news'] = $decode["articles"][0];
 
-        $url = 'http://geodb-free-service.wirefreethought.com/v1/geo/cities?offset=0&limit=5&countryIds='.$_REQUEST['countryCode'];
+        $url = 'http://geodb-free-service.wirefreethought.com/v1/geo/cities?offset=0&limit=5&minPopulation=500000&types=city&languageCode=en&countryIds='.$_REQUEST['countryCode'];
         $ch = curl_init();
 	curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
 	curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
@@ -149,7 +151,22 @@
 	curl_close($ch);
 
         $decode = json_decode($result,true);
-        $output['data']['cities'] = $decode['data'];
+        if(isset($decode['data'])){
+                $output['data']['cities'] = $decode['data'];
+        }else{
+                $url = 'http://geodb-free-service.wirefreethought.com/v1/geo/cities?offset=0&limit=5&types=city&languageCode=en&countryIds='.$_REQUEST['countryCode'];
+                $ch = curl_init();
+                curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+                curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+                curl_setopt($ch, CURLOPT_URL,$url);
+
+                $result=curl_exec($ch);
+
+                curl_close($ch);
+
+                $decode = json_decode($result,true);
+        }
+        
         
         $url='http://api.geonames.org/wikipediaSearchJSON?q=' . $capital."&countryCode=". $_REQUEST['countryCode']. '&maxRows=3&username=cra74ig';
 

@@ -68,3 +68,9 @@ div{
     border-radius: 5;
     background-color: white;
   }
+/* .locationIcon{
+    color: red;
+} */
+.currentIcon{
+    color: orange;
+}

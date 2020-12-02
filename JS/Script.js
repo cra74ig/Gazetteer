@@ -70,7 +70,7 @@ L.control.select = function(opts) {
 
 L.control.select({ position: 'topleft' }).addTo(mymap);
 
-L.easyButton('fa-compass', function(){CurrentPosition()},{position: 'topright'}).addTo(mymap);
+L.easyButton('fa-compass currentIcon', function(){CurrentPosition()},{position: 'topright'}).addTo(mymap);
 
 L.Control.data = L.Control.extend({
     onAdd: function(map) {
@@ -90,33 +90,17 @@ L.control.data = function(opts) {
 }
 
 L.control.data({ position: 'topleft' }).addTo(mymap);
-var mySwiper = new Swiper('.swiper-container', {
-    // Optional parameters
-    direction: 'horizontal',
-    loop: false,
-  
-    // If we need pagination
-    pagination: {
-      el: '.swiper-pagination',
-    },
-  
-    // And if we need scrollbar
-    scrollbar: {
-      el: '.swiper-scrollbar',
-    },
-    autoplay: {
-        delay: 5000,
-        disableOnInteraction: false,
-      }
-  })
 
-var CurrentIcon = L.icon({
-    iconUrl: "Images/location-pointer.svg",
-    
+var CurrentIcon = L.divIcon({
+    html: '<i class="fas fa-street-view currentIcon"></i>',
 
-    iconSize:     [38, 95], // size of the icon
-    iconAnchor:   [22, 94], // point of the icon which will correspond to marker's location
-});
+    className: 'myDivIcon'
+})
+var tackIcon = L.divIcon({
+    html: '<i class="fas fa-map-pin locationIcon"></i>',
+
+    className: 'myDivIcon'
+})
 
 $(document).ready(function(){
     $.ajax({
@@ -205,15 +189,17 @@ function main(countryCode){
                     };
                     
                 
-                var polygon = L.polygon(coordsArray,{color: 'blue'}).addTo(mymap);
+                var polygon = L.polygon(coordsArray,{color: 'blue'}).bindTooltip(result.data["geonames"][0]["countryName"],{
+                    sticky: true
+                }).addTo(mymap);
                
                 // zoom the map to the polyline
                 mymap.fitBounds(polygon.getBounds());
                 $("#News").html("<h2>Global News</h2><h3>"+result.data["news"]["title"]+"</h3>"+result.data["news"]["description"]+"<a href="+result.data["news"]["url"]+">Read more</a>")
                 $('#picture').html("<img class='webPicture' src='"+result.data["webPicture"] + "'>");
-                $('#currentWeather').html("<img class='weather' src='"+result.data["Weather"]["current"]["condition"]["icon"] + "'><h3>"+result.data["Weather"]["current"]["temp_c"]+"<h3>");
-                $('#weatherDay2').html("<img class='weather' src='"+result.data["Weather"]["day2"]["condition"]["icon"] + "'><h3>"+result.data["Weather"]["day2"]["maxtemp_c"]+"<h3></p>"+result.data["Weather"]["day2"]["mintemp_c"]+"</p>");
-                $('#weatherDay3').html("<img class='weather' src='"+result.data["Weather"]["day3"]["condition"]["icon"] + "'><h3>"+result.data["Weather"]["day3"]["maxtemp_c"]+"<h3></p>"+result.data["Weather"]["day3"]["mintemp_c"]+"</p>");
+                $('#currentWeather').html("<img class='weather' src='"+result.data["Weather"]["current"]["condition"]["icon"] + "'><h3>"+result.data["Weather"]["current"]["temp_c"]+"&#8451<h3>");
+                $('#weatherDay2').html("<img class='weather' src='"+result.data["Weather"]["day2"]["condition"]["icon"] + "'><h3>"+result.data["Weather"]["day2"]["maxtemp_c"]+"&#8451</h3><p>"+result.data["Weather"]["day2"]["mintemp_c"]+"&#8451</p>");
+                $('#weatherDay3').html("<img class='weather' src='"+result.data["Weather"]["day3"]["condition"]["icon"] + "'><h3>"+result.data["Weather"]["day3"]["maxtemp_c"]+"&#8451</h3><p>"+result.data["Weather"]["day3"]["mintemp_c"]+"&#8451</p>");
                 $('#countryName').html(result.data["geonames"][0]["countryName"]);
                 $('#capitalCity').html(result.data["geonames"][0]["capital"]);
                 $('#Population').html(result.data["geonames"][0]["population"]);
@@ -224,6 +210,16 @@ function main(countryCode){
                 $('#WikiLinks').html("<a href='https://"+result.data['WikiLinks'][0]['wikipediaUrl']+"'>"+result.data['WikiLinks'][0]['title']+"</a></br><a href='https://"+result.data['WikiLinks'][1]['wikipediaUrl']+"'>"+result.data['WikiLinks'][1]['title']+"</a></br><a href='https://"+result.data['WikiLinks'][2]['wikipediaUrl']+"'>"+result.data['WikiLinks'][2]['title']+"</a>");
                 console.log(result.data["cities"][0]["latitude"]);
                 console.log(result.data["cities"][0]["longitude"]);
+                for (let index = 0; index < result.data["cities"].length; index++) {
+                    var markerCorods = new L.LatLng(result.data["cities"][index]["latitude"],result.data["cities"][index]["longitude"]);
+                    var marker = L.marker(markerCorods, {
+                        title: result.data["cities"][index]["name"],
+                        icon: tackIcon
+                      }).bindTooltip(result.data["cities"][index]["name"],{
+                          sticky: true
+                      }).addTo(markerGroup);
+                }
+
             }
         
         },
@@ -242,6 +238,8 @@ function GetCountryCode(position) {
     var marker = L.marker(markerCorods, {
         title: "Current Location",
         icon: CurrentIcon
+      }).bindTooltip("Current Location", {
+          sticky: true
       }).addTo(markerGroup);
     $.ajax({
         url: "PHP/GetCountry.PHP",
