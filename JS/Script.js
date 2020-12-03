@@ -208,14 +208,13 @@ function main(countryCode){
                 $('#USD').html(result.data["currency"]["USD"]);
                 $('#EUR').html(result.data["currency"]["EUR"]);
                 $('#WikiLinks').html("<a href='https://"+result.data['WikiLinks'][0]['wikipediaUrl']+"'>"+result.data['WikiLinks'][0]['title']+"</a></br><a href='https://"+result.data['WikiLinks'][1]['wikipediaUrl']+"'>"+result.data['WikiLinks'][1]['title']+"</a></br><a href='https://"+result.data['WikiLinks'][2]['wikipediaUrl']+"'>"+result.data['WikiLinks'][2]['title']+"</a>");
-                console.log(result.data["cities"][0]["latitude"]);
-                console.log(result.data["cities"][0]["longitude"]);
+                
                 for (let index = 0; index < result.data["cities"].length; index++) {
                     var markerCorods = new L.LatLng(result.data["cities"][index]["latitude"],result.data["cities"][index]["longitude"]);
                     var marker = L.marker(markerCorods, {
                         title: result.data["cities"][index]["name"],
                         icon: tackIcon
-                      }).bindTooltip(result.data["cities"][index]["name"],{
+                      }).bindTooltip(result.data["cities"][index]["name"] + "<br>Population: " + result.data["cityData"][result.data["cities"][index]["id"]]["population"],{
                           sticky: true
                       }).addTo(markerGroup);
                 }

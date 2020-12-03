@@ -140,7 +140,7 @@
         
         $output['data']['news'] = $decode["articles"][0];
 
-        $url = 'http://geodb-free-service.wirefreethought.com/v1/geo/cities?offset=0&limit=5&minPopulation=500000&types=city&languageCode=en&countryIds='.$_REQUEST['countryCode'];
+        $url = 'http://geodb-free-service.wirefreethought.com/v1/geo/cities?offset=0&limit=3&minPopulation=500000&types=city&languageCode=en&countryIds='.$_REQUEST['countryCode'];
         $ch = curl_init();
 	curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
 	curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
@@ -153,8 +153,29 @@
         $decode = json_decode($result,true);
         if(isset($decode['data'])){
                 $output['data']['cities'] = $decode['data'];
+                
+                foreach($decode['data'] as $city){
+                        $cityId = $city['id'];
+                        
+                        $url='https://wft-geo-db.p.rapidapi.com/v1/geo/cities/'.$cityId.'?rapidapi-key=ffe6b0389bmsh9bc50a78eef5cd5p143616jsne718a2a362ec';
+                        
+                        $ch = curl_init();
+                        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+                        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+                        curl_setopt($ch, CURLOPT_URL,$url);
+
+                        $result=curl_exec($ch);
+
+                        curl_close($ch);
+                        $decode = json_decode($result,true);
+                        
+                        $output['data']['cityData'][$cityId] = $decode['data'];
+                        sleep(2);
+                        
+                        
+                }
         }else{
-                $url = 'http://geodb-free-service.wirefreethought.com/v1/geo/cities?offset=0&limit=5&types=city&languageCode=en&countryIds='.$_REQUEST['countryCode'];
+                $url = 'http://geodb-free-service.wirefreethought.com/v1/geo/cities?offset=0&limit=3&types=city&languageCode=en&countryIds='.$_REQUEST['countryCode'];
                 $ch = curl_init();
                 curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
                 curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
@@ -165,6 +186,28 @@
                 curl_close($ch);
 
                 $decode = json_decode($result,true);
+                if(isset($decode['data'])){
+                        $output['data']['cities'] = $decode['data'];
+                        
+                        foreach($decode['data'] as $city){
+                                $cityId = $city['id'];
+                                
+                                $ch = curl_init();
+                                $url='https://wft-geo-db.p.rapidapi.com/v1/geo/cities/'.$cityId.'?rapidapi-key=ffe6b0389bmsh9bc50a78eef5cd5p143616jsne718a2a362ec';
+                                
+                                curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+                                curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+                                curl_setopt($ch, CURLOPT_URL,$url);
+                                
+                                $result=curl_exec($ch);
+
+                                curl_close($curl);
+                                $decode = json_decode($result,true);
+                                
+                                $output['data']['cityData'][$cityId] = $decode['data'];
+                                sleep(2);
+                        }
+                }
         }
         
         
