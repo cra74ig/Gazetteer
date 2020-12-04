@@ -12,8 +12,6 @@
             }
         
         }
-        // $output["data"][] = $country["properties"]["name"];
-        //     $output["data"][$country["properties"]["name"]] = $country["properties"]["iso_a2"];
         $output['status']['code'] = "200";
         $output['status']['name'] = "ok";
         $output['status']['description'] = "Borders returned";

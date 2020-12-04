@@ -2,7 +2,7 @@
         error_reporting(E_ALL);
 
         $executionStartTime = microtime(true) / 1000;
-    
+        // borders
         $url='https://gazetteer.craigbutton.co.uk/PHP/GetBorders.PHP?countryCode='. $_REQUEST['countryCode'];
     
         $ch = curl_init();
@@ -17,7 +17,7 @@
         $Coords = json_decode($result,true);
         $output['data']['borders']["coords"] = $Coords["data"]["coords"];
         $output['data']['borders']["type"] = $Coords["data"]["type"];
-
+        // Country info
         $url='http://api.geonames.org/countryInfoJSON?country=' . $_REQUEST['countryCode']. '&username=cra74ig';
 
 	$ch = curl_init();
@@ -38,7 +38,7 @@
         $countryName = $decode["geonames"][0]["countryName"];
         //fixes issue where spaces in capital city names would retreive null value by using url encoding
         $capital = str_replace(" ","%20",$capital);
-
+        // Weather
         $url='http://api.weatherapi.com/v1/forecast.json?key=5006cbe9d8be4f33a27115359200511&q='.$capital.'&days=5&hour=12';
 
 	$ch = curl_init();
@@ -56,9 +56,7 @@
         $output["data"]["Weather"]["day3"] = $decode["forecast"]["forecastday"][1]["day"];
         $output["data"]["Weather"]["day4"] = $decode["forecast"]["forecastday"][2]["day"];
         
-        
-        // $output["data"]["Weather"]["forecast"] = $decode["forecast"];
-
+        // Picture
         $url='https://pixabay.com/api/?key=18982067-e440b26cdd9f91df62d92ee06&q='.$capital.'+city&image_type=photo&pretty=true';
 
 	$ch = curl_init();
@@ -94,7 +92,7 @@
         }
        
 
-
+        // exchange Rates
         $url='https://api.exchangeratesapi.io/latest?base='.$currency;
 
 	$ch = curl_init();
@@ -140,6 +138,7 @@
         
         $output['data']['news'] = $decode["articles"][0];
 
+        // cities
         $url = 'http://geodb-free-service.wirefreethought.com/v1/geo/cities?offset=0&limit=3&minPopulation=500000&types=city&languageCode=en&countryIds='.$_REQUEST['countryCode'];
         $ch = curl_init();
 	curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
@@ -170,7 +169,7 @@
                         $decode = json_decode($result,true);
                         
                         $output['data']['cityData'][$cityId] = $decode['data'];
-                        sleep(2);
+                        
                         
                         
                 }
@@ -205,12 +204,12 @@
                                 $decode = json_decode($result,true);
                                 
                                 $output['data']['cityData'][$cityId] = $decode['data'];
-                                sleep(2);
+                                
                         }
                 }
         }
         
-        
+        // wikiLinks
         $url='http://api.geonames.org/wikipediaSearchJSON?q=' . $capital."&countryCode=". $_REQUEST['countryCode']. '&maxRows=3&username=cra74ig';
 
 	$ch = curl_init();
