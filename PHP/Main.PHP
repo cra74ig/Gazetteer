@@ -39,7 +39,7 @@
         //fixes issue where spaces in capital city names would retreive null value by using url encoding
         $capital = str_replace(" ","%20",$capital);
         // Weather
-        $url='http://api.weatherapi.com/v1/forecast.json?key=5006cbe9d8be4f33a27115359200511&q='.$capital.'&days=5&hour=12';
+        $url='http://api.weatherapi.com/v1/forecast.json?key=5006cbe9d8be4f33a27115359200511&q='.$capital.'&days=3&hour=12';
 
 	$ch = curl_init();
 	curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
@@ -56,6 +56,7 @@
         $output["data"]["Weather"]["day3"] = $decode["forecast"]["forecastday"][1]["day"];
         $output["data"]["Weather"]["day4"] = $decode["forecast"]["forecastday"][2]["day"];
         
+        
         // Picture
         $url='https://pixabay.com/api/?key=18982067-e440b26cdd9f91df62d92ee06&q='.$capital.'+city&image_type=photo&pretty=true';
 
@@ -70,8 +71,16 @@
 
         $decode = json_decode($result,true);
         if(isset($decode["hits"][0])){
-                $output["data"]["picture"] = $decode["hits"][0]["previewURL"];
-                $output["data"]["webPicture"] = $decode["hits"][0]["webformatURL"];
+                $output["data"]["webPicture"][0] = $decode["hits"][0]["webformatURL"];
+                
+                if(isset($decode["hits"][1])){
+                        $output["data"]["webPicture"][1] = $decode["hits"][1]["webformatURL"];
+                        // $test = $decode["hits"][1]["webformatURL"];
+                        if(isset($decode["hits"][2])){
+                                $output["data"]["webPicture"][2] = $decode["hits"][2]["webformatURL"];
+                        }
+                }
+                
         }else{
                 $url='https://pixabay.com/api/?key=18982067-e440b26cdd9f91df62d92ee06&q='.$countryName.'+city&image_type=photo&pretty=true';
 
@@ -86,8 +95,14 @@
         
                 $decode = json_decode($result,true);
                 if(isset($decode["hits"][0])){
-                        $output["data"]["picture"] = $decode["hits"][0]["previewURL"];
-                        $output["data"]["webPicture"] = $decode["hits"][0]["webformatURL"];
+                        $output["data"]["webPicture"][0] = $decode["hits"][0]["webformatURL"];
+                        $test = $decode["hits"][0]["webformatURL"];
+                        if(isset($decode["hits"][1])){
+                                $output["data"]["webPicture"][1] = $decode["hits"][1]["webformatURL"];
+                                if(isset($decode["hits"][2])){
+                                        $output["data"]["webPicture"][2] = $decode["hits"][2]["webformatURL"];
+                                }
+                        }
                 }
         }
        
