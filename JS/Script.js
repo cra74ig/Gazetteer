@@ -144,8 +144,6 @@ $(document).ready(function(){
     CurrentPosition();
 })
 $("#CountryChoice").change(function(){
-    console.log("countryChange")
-    console.log($("#CountryChoice :selected").val())
     main($("#CountryChoice :selected").val())
 })
     
@@ -154,7 +152,6 @@ $("#CurrentLocation").click(function(){
     CurrentPosition();
 })
 function CurrentPosition(){
-    console.log("Getting Current Location");
     if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(GetCountryCode);
       } else { 
@@ -170,7 +167,7 @@ function main(countryCode){
             countryCode: countryCode
         },
         success: function(result) {
-            console.log(result);
+            
 
             if (result.status.name == "ok") {
                 $type = result.data['borders']["type"];
@@ -180,14 +177,14 @@ function main(countryCode){
 
                         result.data['borders']["coords"].forEach(coordA => {
                             coordA.forEach(coord=>{  
-                                // console.log(coord);
+                                
                                 coordArray = Array();
                                 coord.forEach(coordB=>{
                                     coordB = coordB.reverse();
                                     coordArray.push(coordB);
                                 });
                                 coordsArray.push(coordArray);
-                                // console.log(coordsArray)
+                                
                             }); 
                             
                         });
@@ -201,7 +198,7 @@ function main(countryCode){
                         });
                     };
                 if (mymap.hasLayer(window.markerGroup)) {
-                    console.log("test");
+                    
                     mymap.removeLayer(window.markerGroup);
                     }
                 window.markerGroup = L.layerGroup().addTo(mymap);
@@ -214,10 +211,10 @@ function main(countryCode){
                     if (first){
                         pictureHtml="<div class='item active'><img src='"+picture+"'></div>"
                         first= false;
-                        console.log(pictureHtml)
+                        
                     }else{
                         pictureHtml = pictureHtml + "<div class='item'><img src='"+picture+"'></div>"
-                        console.log(pictureHtml)
+                        
                     }
                 });
                 // zoom the map to the polyline
@@ -284,8 +281,6 @@ function GetCountryCode(position) {
 
                 $('#CountryChoice').val(result.data);
                 main(result.data);
-                
-
             }
         
         },
@@ -294,7 +289,4 @@ function GetCountryCode(position) {
         }
     });
     
-}
-function showCurrency(){
-    console.log("test");
 }
