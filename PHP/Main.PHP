@@ -75,7 +75,7 @@
                 
                 if(isset($decode["hits"][1])){
                         $output["data"]["webPicture"][1] = $decode["hits"][1]["webformatURL"];
-                        // $test = $decode["hits"][1]["webformatURL"];
+                        
                         if(isset($decode["hits"][2])){
                                 $output["data"]["webPicture"][2] = $decode["hits"][2]["webformatURL"];
                         }
