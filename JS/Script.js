@@ -23,7 +23,7 @@ var baseMaps = {
 };
 L.control.layers(baseMaps).addTo(mymap);
 
-// L.easyButton("fa-compass",CurrentPosition()).addTo(mymap);
+
 var d = new Date();
 var n = d.getDay()
 switch (n){
@@ -219,7 +219,7 @@ function main(countryCode){
                 });
                 // zoom the map to the polyline
                 mymap.fitBounds(polygon.getBounds());
-                $("#News").html("<h2>Global News</h2><h3>"+result.data["news"]["title"]+"</h3>"+result.data["news"]["description"]+"<a href="+result.data["news"]["url"]+">Read more</a>")
+                $("#News").html("<h2>Global News</h2><h3>"+result.data["news"]["title"]+"</h3><p>"+result.data["news"]["description"]+"<a href="+result.data["news"]["url"]+">Read more</a></p>")
                 $('#Pictures').html(pictureHtml);
                 $('#currentWeather').html("<img class='weather' src='"+result.data["Weather"]["current"]["condition"]["icon"] + "'><h3>"+result.data["Weather"]["current"]["temp_c"]+"&#8451<h3>");
                 $('#weatherDay2').html("<img class='weather' src='"+result.data["Weather"]["day2"]["condition"]["icon"] + "'><h3>"+result.data["Weather"]["day2"]["maxtemp_c"]+"&#8451</h3><p>"+result.data["Weather"]["day2"]["mintemp_c"]+"&#8451</p>");
@@ -232,7 +232,7 @@ function main(countryCode){
                 $('#GBP').html(result.data["currency"]["GBP"]);
                 $('#USD').html(result.data["currency"]["USD"]);
                 $('#EUR').html(result.data["currency"]["EUR"]);
-                $('#WikiLinks').html("<a href='https://"+result.data['WikiLinks'][0]['wikipediaUrl']+"'>"+result.data['WikiLinks'][0]['title']+"</a></br><a href='https://"+result.data['WikiLinks'][1]['wikipediaUrl']+"'>"+result.data['WikiLinks'][1]['title']+"</a></br><a href='https://"+result.data['WikiLinks'][2]['wikipediaUrl']+"'>"+result.data['WikiLinks'][2]['title']+"</a>");
+                $('#WikiLinks').html("<p><a href='https://"+result.data['WikiLinks'][0]['wikipediaUrl']+"'>"+result.data['WikiLinks'][0]['title']+"</a></br><a href='https://"+result.data['WikiLinks'][1]['wikipediaUrl']+"'>"+result.data['WikiLinks'][1]['title']+"</a></br><a href='https://"+result.data['WikiLinks'][2]['wikipediaUrl']+"'>"+result.data['WikiLinks'][2]['title']+"</a></p>");
                 
                 for (let index = 0; index < result.data["cities"].length; index++) {
                     var markerCorods = new L.LatLng(result.data["cities"][index]["latitude"],result.data["cities"][index]["longitude"]);

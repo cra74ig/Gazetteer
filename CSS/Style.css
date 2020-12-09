@@ -1,20 +1,16 @@
-#CurrentLocation{
-    max-height: 25px;
-    max-width: 25px;
+.leaflet-touch .leaflet-control-layers, .leaflet-touch .leaflet-bar {
+    border:none;
     
-}
-#CurrentLocation:hover{
-    cursor: pointer;
 }
 input[Type="button"]{
     cursor: pointer;
 }
-@media (min-width: 480px){
+@media (min-width: 675px){
     .leaflet-left{
         width: 50%;
     }
 }
-@media only screen and (max-width: 479px){
+@media only screen and (max-width: 674px){
     .leaflet-left{
         width: 80%;
     }
@@ -30,11 +26,6 @@ input[Type="button"]{
     }
 }
 
-.swiper-container {
-    width: 100%;
-    height: 100%;
-}
-   
 
 select:hover{
     cursor: pointer;
@@ -42,6 +33,10 @@ select:hover{
 body {
     padding: 0;
     margin: 0;
+    font-family: 'Courier New', Courier, monospace;
+}
+td{
+    text-align: center;
 }
 html, body, #map {
     height: 100%;
@@ -58,19 +53,27 @@ div{
 .leaflet-control{
     width: 100%;
 }
-.input-group{
-    width: 100%;
-}
 .webPicture{
     width:100%
 }
 .nav-pills > li > a {
     border-radius: 5;
     background-color: white;
+    max-width: 80px;
+    text-align: center;
+    padding: 5px;
+    font-size: x-small;
   }
-/* .locationIcon{
-    color: red;
-} */
+ul{
+    width: 100%;
+}
+.container{
+    width: 100%;
+    padding: 0;
+}
 .currentIcon{
     color: orange;
+}
+.easy-button-button{
+    float: right;
 }
